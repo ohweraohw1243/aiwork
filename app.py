@@ -8,8 +8,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
-if not GROQ_API_KEY:
-    raise RuntimeError("GROQ_API_KEY is not set")
 
 app = Flask(__name__)
 app.secret_key = "super_secret_key_for_session"
@@ -319,6 +317,9 @@ def get_service_info():
     return call_groq_api(prompt, system_role="Ты эксперт салона красоты. Отвечай увлекательно и профессионально.")
 
 def call_groq_api(prompt, system_role="Ты AI-ассистент."):
+    if not GROQ_API_KEY:
+        return jsonify({"error": "GROQ_API_KEY is not set"}), 503
+
     try:
         headers = {
             "Authorization": f"Bearer {GROQ_API_KEY}",
