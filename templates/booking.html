@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Онлайн-запись{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <section class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100">
+        <h2 class="text-2xl font-bold text-slate-900 mb-2">Онлайн-запись</h2>
+        <p class="text-slate-500 mb-8">Выберите удобное для вас время и мастера. Выбранная запись появится в вашем профиле.</p>
+        
+        {% if data.available_slots %}
+        <div class="space-y-4">
+            {% for slot in data.available_slots %}
+            <div class="group bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-400 hover:shadow-lg transition cursor-pointer relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <img src="{{ slot.avatar }}" alt="{{ slot.master }}" class="w-16 h-16 rounded-full shadow-sm ring-2 ring-white">
+                    <div>
+                        <p class="font-bold text-xl text-slate-800">{{ slot.date }}</p>
+                        <p class="text-sm text-slate-500 mt-1">Мастер салона: <span class="font-bold text-indigo-600">{{ slot.master }}</span></p>
+                    </div>
+                </div>
+                <button onclick="bookAppt('{{ slot.date }}')" class="w-full sm:w-auto bg-indigo-50 border border-indigo-100 text-indigo-700 group-hover:bg-indigo-600 group-hover:text-white px-6 py-3 rounded-xl text-sm font-bold transition shadow-sm">
+                    Выбрать время
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12 bg-slate-50 rounded-xl border border-dashed border-slate-300">
+            <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            <p class="text-slate-500 font-medium">К сожалению, пока нет свободных окон.</p>
+            <p class="text-sm text-slate-400 mt-1">Возвращайтесь чуть позже!</p>
+        </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    async function bookAppt(date) {
+        if(!confirm('Записаться на ' + date + '?')) return;
+        const res = await fetch('/api/book', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({date})
+        });
+        if(res.ok) {
+            window.location.href = '/'; // Возвращаем в профиль
+        } else {
+            alert('Ошибка при записи');
+        }
+    }
+</script>
+{% endblock %}

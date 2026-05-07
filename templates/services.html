@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Наши услуги{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto mt-4 space-y-6">
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 text-center mb-8">
+        <h2 class="text-3xl font-extrabold text-slate-900 mb-3">Каталог услуг</h2>
+        <p class="text-slate-500 text-lg">Выберите услугу, чтобы узнать о ней подробнее (информация генерируется AI)</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for s in data.services_list %}
+        <a href="/service/{{ s.name }}" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:border-indigo-300 hover:shadow-md transition transform hover:-translate-y-1 block">
+            <h3 class="font-bold text-slate-800 text-lg mb-2">{{ s.name }}</h3>
+            <p class="text-indigo-600 font-semibold">{{ s.price }} ₽</p>
+            <div class="mt-4 text-sm text-indigo-500 font-medium flex items-center gap-1 group-hover:text-indigo-700">
+                Узнать подробнее у ИИ &rarr;
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

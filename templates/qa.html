@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}Вопросы и ответы{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto mt-4">
+    
+    <!-- Область чата -->
+    <div class="bg-white rounded-3xl shadow-md border border-slate-100 flex flex-col overflow-hidden">
+        
+        <div class="text-center pt-10 px-8 pb-6 border-b border-slate-50 bg-white">
+            <h2 class="text-3xl font-extrabold text-slate-900 mb-3">Задайте вопрос нашему ИИ</h2>
+            <p class="text-slate-500 text-lg">Узнайте больше о мастерах, косметике или правилах салона.</p>
+        </div>
+
+        <!-- История переписки -->
+        <div id="chat-history" class="p-6 h-[450px] overflow-y-auto space-y-6 bg-slate-50/50">
+            <!-- Сообщение ИИ -->
+            <div class="flex gap-4">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 shrink-0 flex items-center justify-center text-white font-bold shadow-sm">AI</div>
+                <div class="bg-white border border-slate-100 p-4 rounded-2xl rounded-tl-sm shadow-sm max-w-[85%] text-slate-700 text-sm">
+                    Здравствуйте, {{ data.name }}! Я виртуальный ассистент салона "Стиль и Грация". Чем я могу вам помочь сегодня?
+                </div>
+            </div>
+        </div>
+
+        <!-- Поле ввода -->
+        <div class="p-4 border-t border-slate-100 bg-white">
+            <form id="qa-form" class="flex gap-3">
+                <input type="text" id="question" required
+                       class="flex-1 px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 text-slate-700 transition" 
+                       placeholder="Например: Какую косметику вы используете при окрашивании?" autocomplete="off">
+                <button type="submit" id="send-btn" class="bg-indigo-600 text-white px-6 py-3.5 rounded-xl font-semibold hover:bg-indigo-700 transition flex items-center gap-2">
+                    Отправить
+                </button>
+            </form>
+        </div>
+        
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const form = document.getElementById('qa-form');
+    const input = document.getElementById('question');
+    const history = document.getElementById('chat-history');
+    const sendBtn = document.getElementById('send-btn');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const q = input.value.trim();
+        if (!q) return;
+
+        // Добавляем сообщение пользователя
+        appendMessage('user', q);
+        input.value = '';
+        input.disabled = true;
+        sendBtn.disabled = true;
+
+        // Лоадер от ИИ
+        const loaderId = appendLoader();
+
+        try {
+            const res = await fetch('/api/ask_question', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({question: q})
+            });
+            const data = await res.json();
+            
+            document.getElementById(loaderId).remove();
+            
+            if (data.answer) {
+                appendMessage('ai', data.answer);
+            } else {
+                appendMessage('ai', 'К сожалению, произошла ошибка. Попробуйте еще раз.');
+            }
+        } catch (err) {
+            document.getElementById(loaderId).remove();
+            appendMessage('ai', 'Ошибка соединения с сервером.');
+        }
+
+        input.disabled = false;
+        sendBtn.disabled = false;
+        input.focus();
+    });
+
+    function appendMessage(sender, text) {
+        const div = document.createElement('div');
+        div.className = sender === 'user' ? 'flex gap-4 justify-end' : 'flex gap-4';
+        
+        let innerHtml = '';
+        if (sender === 'user') {
+            innerHtml = `
+                <div class="bg-indigo-600 text-white p-4 rounded-2xl rounded-tr-sm shadow-sm max-w-[85%] text-sm whitespace-pre-wrap">${text}</div>
+                <div class="w-10 h-10 rounded-full bg-slate-200 shrink-0 flex items-center justify-center text-slate-600 font-bold shadow-sm">Вы</div>
+            `;
+        } else {
+            innerHtml = `
+                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 shrink-0 flex items-center justify-center text-white font-bold shadow-sm">AI</div>
+                <div class="bg-white border border-slate-100 p-4 rounded-2xl rounded-tl-sm shadow-sm max-w-[85%] text-slate-700 text-sm whitespace-pre-wrap">${text}</div>
+            `;
+        }
+        
+        div.innerHTML = innerHtml;
+        history.appendChild(div);
+        history.scrollTop = history.scrollHeight;
+    }
+
+    function appendLoader() {
+        const id = 'loader-' + Date.now();
+        const div = document.createElement('div');
+        div.id = id;
+        div.className = 'flex gap-4';
+        div.innerHTML = `
+            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 shrink-0 flex items-center justify-center text-white font-bold shadow-sm">AI</div>
+            <div class="bg-white border border-slate-100 p-4 rounded-2xl rounded-tl-sm shadow-sm flex items-center gap-2">
+                <div class="w-2 h-2 bg-slate-300 rounded-full animate-bounce"></div>
+                <div class="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                <div class="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+            </div>
+        `;
+        history.appendChild(div);
+        history.scrollTop = history.scrollHeight;
+        return id;
+    }
+</script>
+{% endblock %}

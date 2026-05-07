@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Информация об услуге{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <a href="/services" class="text-sm text-indigo-500 hover:text-indigo-700 font-medium mb-6 inline-flex items-center gap-1">
+        &larr; Назад к списку услуг
+    </a>
+
+    <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+        <h2 class="text-3xl font-extrabold text-slate-900 mb-2">{{ data.service.name }}</h2>
+        <p class="text-xl text-indigo-600 font-semibold mb-8">от {{ data.service.price }} ₽</p>
+
+        <div class="bg-gradient-to-br from-indigo-50 to-purple-50 p-6 rounded-2xl border border-indigo-100">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold shadow-sm">AI</div>
+                <h3 class="text-lg font-bold text-slate-800">Описание от ИИ-эксперта</h3>
+            </div>
+            
+            <div id="ai-content" class="text-slate-700 text-[15px] leading-relaxed whitespace-pre-wrap">
+                <div class="flex items-center gap-3 animate-pulse text-indigo-400 py-4">
+                    <div class="w-6 h-6 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+                    <span>Генерирую авторское описание...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-slate-100 text-center">
+            <a href="/booking" class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-3.5 rounded-xl text-sm font-semibold hover:opacity-90 transition transform hover:-translate-y-0.5 inline-block shadow-md">
+                Перейти к онлайн-записи
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const serviceName = "{{ data.service.name }}";
+        const contentBox = document.getElementById('ai-content');
+        
+        try {
+            const res = await fetch('/api/service_info', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({service_name: serviceName})
+            });
+            const d = await res.json();
+            
+            if (d.answer) {
+                contentBox.innerHTML = d.answer;
+            } else {
+                contentBox.innerHTML = `<span class="text-red-500">Не удалось загрузить описание.</span>`;
+            }
+        } catch (e) {
+            contentBox.innerHTML = `<span class="text-red-500">Ошибка при запросе к серверу.</span>`;
+        }
+    });
+</script>
+{% endblock %}
