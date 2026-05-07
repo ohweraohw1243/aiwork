@@ -27,10 +27,20 @@ pip3 install -r requirements.txt
 python3 app.py
 ```
 
-3. Откройте в браузере: `http://127.0.0.1:5000`
+3. Откройте в браузере: `http://127.0.0.1:5001`
 
-## Как выложить на хостинг
-Приложение полностью готово к деплою на популярные Python платформы, такие как [Render](https://render.com), [PythonAnywhere](https://pythonanywhere.com), или [Railway](https://railway.app). Достаточно:
-- Сделать push этого кода в GitHub
-- Привязать GitHub к Render.com (выбрать "Web Service", стек Python, команда запуска: `gunicorn app:app`).  
-  *(Примечание: для продакшена понадобится добавить `gunicorn` в `requirements.txt`).*# aiwork
+## Как выложить на Render
+1. Залейте код в GitHub.
+2. Откройте [Render](https://render.com) и создайте `New +` -> `Web Service`.
+3. Выберите ваш GitHub-репозиторий.
+4. Укажите:
+  - `Environment`: `Python`
+  - `Build Command`: `pip install -r requirements.txt`
+  - `Start Command`: `gunicorn app:app`
+5. Добавьте переменные окружения в Render:
+  - `GROQ_API_KEY` - ваш ключ Groq
+  - `FLASK_SECRET_KEY` - любой длинный случайный секрет
+  - `DATABASE_URL` - URL PostgreSQL, если вы подключаете отдельную базу
+6. Если базы еще нет, можно сначала запустить проект на локальном SQLite, а потом подключить PostgreSQL в Render и вставить `DATABASE_URL`.
+
+Если хотите использовать Render PostgreSQL, сначала создайте `New +` -> `PostgreSQL`, затем вставьте выданный `Internal Database URL` в `DATABASE_URL` у Web Service.

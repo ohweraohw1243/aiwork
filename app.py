@@ -10,7 +10,7 @@ load_dotenv()
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 
 app = Flask(__name__)
-app.secret_key = "super_secret_key_for_session"
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "super_secret_key_for_session")
 
 # Конфигурация БД: если есть DATABASE_URL (для Render/Railway), берем ее. 
 # Иначе создаем локальный SQLite-файл "salon.db"
