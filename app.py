@@ -14,12 +14,14 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", "super_secret_key_for_sessio
 
 # Конфигурация БД: если есть DATABASE_URL (для Render/Railway), берем ее. 
 # Иначе создаем локальный SQLite-файл "salon.db"
-db_url = os.environ.get("DATABASE_URL", "sqlite:///salon.db")
+db_url = (os.environ.get("DATABASE_URL") or "sqlite:///salon.db").strip()
 if db_url.startswith("postgres://"):
     db_url = db_url.replace("postgres://", "postgresql://", 1)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+print(f"DB URL repr: {repr(db_url)}", flush=True)
 
 db = SQLAlchemy(app)
 
