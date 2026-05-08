@@ -2,54 +2,157 @@
 {% block title %}Мой профиль{% endblock %}
 
 {% block content %}
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-    
-    <div class="space-y-8">
-        <section class="salon-card rounded-[28px] border border-white/40 p-7">
-            <div class="flex items-start justify-between mb-5">
-                <div>
-                    <div class="inline-flex items-center gap-2 salon-chip px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[0.18em] text-pink-700 mb-3">
-                        personalised ai
-                    </div>
-                    <h2 class="brand-serif text-3xl font-bold text-slate-900 flex items-center gap-2">
-                        ✨ Умное предложение
+<div class="space-y-8">
+    <section class="salon-card rounded-[32px] border border-white/40 p-6 md:p-10 relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-pink-200/40 blur-3xl floating-orb"></div>
+        <div class="absolute bottom-0 left-1/3 h-28 w-28 rounded-full bg-fuchsia-200/40 blur-3xl floating-orb delay-1"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8 items-center relative">
+            <div class="space-y-6 fade-up">
+                <div class="inline-flex items-center gap-2 salon-chip px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[0.18em] text-pink-700">
+                    welcome to style & grace
+                </div>
+                <div class="space-y-4 max-w-2xl">
+                    <h2 class="brand-serif text-5xl md:text-6xl font-bold text-slate-900 leading-[0.95]">
+                        Сияющая красота,<br>
+                        мягкая забота и<br>
+                        AI-подбор услуг
                     </h2>
-                    <p class="text-sm text-slate-500 mt-2">Подборка основана на вашей истории визитов</p>
+                    <p class="text-slate-500 text-base md:text-lg leading-relaxed max-w-xl">
+                        Салон, где всё продумано для ощущения уюта, женственности и спокойной уверенности. Нежная палитра, профессиональные мастера и персональные рекомендации помогают выбрать услугу без лишней суеты.
+                    </p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a href="/booking" class="bg-gradient-to-r from-pink-600 to-fuchsia-600 text-white px-6 py-3.5 rounded-full text-sm font-semibold shadow-lg shadow-fuchsia-100 hover:opacity-95 transition text-center">
+                        Записаться
+                    </a>
+                    <a href="/services" class="salon-chip text-pink-700 px-6 py-3.5 rounded-full text-sm font-semibold hover:scale-[1.01] transition text-center">
+                        Посмотреть услуги
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
+                    <div class="salon-chip rounded-3xl px-4 py-4 text-center hover-lift">
+                        <div class="text-2xl font-bold text-slate-900">{{ data.services_list|length }}</div>
+                        <div class="text-xs uppercase tracking-[0.16em] text-slate-500 mt-1">услуг</div>
+                    </div>
+                    <div class="salon-chip rounded-3xl px-4 py-4 text-center hover-lift">
+                        <div class="text-2xl font-bold text-slate-900">{{ data.active_appointments|length }}</div>
+                        <div class="text-xs uppercase tracking-[0.16em] text-slate-500 mt-1">записей</div>
+                    </div>
+                    <div class="salon-chip rounded-3xl px-4 py-4 text-center hover-lift">
+                        <div class="text-2xl font-bold text-slate-900">{{ data.history|length }}</div>
+                        <div class="text-xs uppercase tracking-[0.16em] text-slate-500 mt-1">визитов</div>
+                    </div>
+                    <div class="salon-chip rounded-3xl px-4 py-4 text-center hover-lift">
+                        <div class="text-2xl font-bold text-slate-900">AI</div>
+                        <div class="text-xs uppercase tracking-[0.16em] text-slate-500 mt-1">ассистент</div>
+                    </div>
                 </div>
             </div>
-            
-            <div class="rounded-[24px] p-6 relative overflow-hidden min-h-[180px] flex flex-col justify-center items-center text-center border border-pink-100 bg-gradient-to-br from-rose-50 via-white to-fuchsia-50">
-                <div class="absolute -top-8 -right-8 h-24 w-24 rounded-full bg-pink-200/40 blur-3xl"></div>
+
+            <div class="relative min-h-[420px] fade-up delay-1">
+                <div class="absolute inset-0 rounded-[30px] bg-gradient-to-br from-rose-100/70 via-white to-fuchsia-100/70"></div>
+                <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80')] bg-cover bg-center rounded-[30px] opacity-40"></div>
+                <div class="absolute inset-0 rounded-[30px] bg-gradient-to-t from-white/35 via-white/10 to-transparent"></div>
+
+                <div class="absolute top-5 left-5 salon-card rounded-3xl px-4 py-3 max-w-[220px] hover-lift">
+                    <p class="text-xs uppercase tracking-[0.18em] text-pink-600 font-bold mb-1">уютный салон</p>
+                    <p class="text-sm text-slate-600 leading-relaxed">Спокойная атмосфера, визуальная легкость и аккуратный сервис для женской аудитории.</p>
+                </div>
+
+                <div class="absolute bottom-5 right-5 salon-card rounded-3xl px-4 py-3 max-w-[240px] hover-lift">
+                    <p class="text-xs uppercase tracking-[0.18em] text-pink-600 font-bold mb-1">ai consultation</p>
+                    <p class="text-sm text-slate-600 leading-relaxed">Нейросеть подбирает подходящую услугу и помогает клиенту быстрее принять решение.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="salon-card rounded-[28px] border border-white/40 p-6 hover-lift fade-up">
+            <div class="text-pink-500 text-2xl mb-3">✦</div>
+            <h3 class="brand-serif text-3xl font-bold text-slate-900 mb-2">Особая Aura</h3>
+            <p class="text-sm text-slate-500 leading-relaxed">Тихий, мягкий и уютный визуал, где легко почувствовать себя в красивом пространстве, а не просто в сервисе.</p>
+        </div>
+        <div class="salon-card rounded-[28px] border border-white/40 p-6 hover-lift fade-up delay-1">
+            <div class="text-fuchsia-500 text-2xl mb-3">♡</div>
+            <h3 class="brand-serif text-3xl font-bold text-slate-900 mb-2">Нежные тона</h3>
+            <p class="text-sm text-slate-500 leading-relaxed">Пастельная палитра, мягкие градиенты и стеклянные карточки создают дорогой визуальный ритм.</p>
+        </div>
+        <div class="salon-card rounded-[28px] border border-white/40 p-6 hover-lift fade-up delay-2">
+            <div class="text-amber-500 text-2xl mb-3">✿</div>
+            <h3 class="brand-serif text-3xl font-bold text-slate-900 mb-2">Удобно с телефона</h3>
+            <p class="text-sm text-slate-500 leading-relaxed">Карточки, сетки и CTA перестраиваются под экран смартфона без потери ощущения премиальности.</p>
+        </div>
+    </section>
+
+    <div class="grid grid-cols-1 xl:grid-cols-5 gap-8">
+        <section class="xl:col-span-3 salon-card rounded-[32px] border border-white/40 p-6 md:p-8">
+            <div class="flex items-end justify-between gap-4 mb-6">
+                <div>
+                    <div class="inline-flex items-center gap-2 salon-chip px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[0.18em] text-pink-700 mb-3">
+                        personalized ai
+                    </div>
+                    <h3 class="brand-serif text-4xl font-bold text-slate-900">Умное предложение</h3>
+                    <p class="text-sm text-slate-500 mt-2">Основано на истории ваших визитов и выглядит как аккуратная beauty-рекомендация.</p>
+                </div>
+            </div>
+
+            <div class="rounded-[28px] p-6 relative overflow-hidden min-h-[190px] flex flex-col justify-center items-center text-center border border-pink-100 bg-gradient-to-br from-rose-50 via-white to-fuchsia-50">
+                <div class="absolute -top-8 -right-8 h-24 w-24 rounded-full bg-pink-200/40 blur-3xl floating-orb"></div>
                 {% if data.history|length == 0 %}
-                    <p class="text-sm text-slate-600 mb-4 max-w-md">Для точной ИИ-рекомендации добавьте хотя бы одну прошлую услугу ниже — тогда предложение станет персональнее.</p>
+                    <p class="text-sm text-slate-600 mb-4 max-w-md">Добавьте хотя бы один прошлый визит ниже, чтобы AI сделал персональный и более точный совет.</p>
                 {% endif %}
 
                 <button id="generate-offer-btn" class="bg-gradient-to-r from-pink-600 via-fuchsia-600 to-violet-600 text-white shadow-lg shadow-fuchsia-200 px-6 py-3 rounded-full text-sm font-semibold hover:opacity-95 transition transform hover:-translate-y-0.5 flex items-center gap-2">
                     <svg class="w-4 h-4 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"></path></svg>
                     Подобрать мне услугу
                 </button>
-                
-                <p id="offer-text" class="hidden text-slate-800 text-[15px] font-medium leading-relaxed mt-5 max-w-lg"></p>
-                
+
+                <p id="offer-text" class="hidden text-slate-800 text-[15px] font-medium leading-relaxed mt-5 max-w-xl"></p>
+
                 <div id="loader" class="hidden flex flex-col items-center mt-4">
                     <div class="w-8 h-8 border-4 border-pink-100 border-t-pink-500 rounded-full animate-spin"></div>
                     <span class="text-xs text-pink-400 mt-2 font-medium">Нейросеть генерирует...</span>
                 </div>
             </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                <div class="salon-chip rounded-[24px] p-5 hover-lift">
+                    <p class="text-xs uppercase tracking-[0.18em] text-pink-600 font-bold mb-2">beauty care</p>
+                    <p class="text-sm text-slate-600 leading-relaxed">Уютный визуал, плавные переходы и воздушные блоки делают взаимодействие спокойным и женственным.</p>
+                </div>
+                <div class="salon-chip rounded-[24px] p-5 hover-lift">
+                    <p class="text-xs uppercase tracking-[0.18em] text-pink-600 font-bold mb-2">appointment</p>
+                    <p class="text-sm text-slate-600 leading-relaxed">Запись и AI-навигация встроены так, чтобы путь к услуге был коротким и эстетичным.</p>
+                </div>
+            </div>
         </section>
 
-        <section class="salon-card rounded-[28px] border border-white/40 p-7">
-            <h2 class="brand-serif text-3xl font-bold text-slate-900 mb-5 pb-4 border-b border-slate-100">Ваши предстоящие визиты</h2>
+        <section class="xl:col-span-2 salon-card rounded-[32px] border border-white/40 p-6 md:p-8">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <div class="inline-flex items-center gap-2 salon-chip px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[0.18em] text-pink-700 mb-3">
+                        latest visits
+                    </div>
+                    <h3 class="brand-serif text-3xl font-bold text-slate-900">Ваши визиты</h3>
+                </div>
+            </div>
+
             {% if data.active_appointments %}
                 <div class="space-y-4">
                 {% for appt in data.active_appointments %}
-                    <div class="bg-white/90 p-5 rounded-2xl border border-slate-100 flex flex-col justify-between hover:border-pink-200 transition shadow-sm">
-                        <div>
-                            <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-full mb-3">Предстоит</span>
-                            <h3 class="font-bold text-slate-800 text-lg">{{ appt.service }}</h3>
-                            <p class="text-sm text-slate-500 font-medium mt-1">{{ appt.date }}</p>
+                    <div class="bg-white/90 p-5 rounded-[24px] border border-slate-100 hover:border-pink-200 transition shadow-sm hover-lift">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-full mb-3">Предстоит</span>
+                                <h4 class="font-bold text-slate-800 text-lg">{{ appt.service }}</h4>
+                                <p class="text-sm text-slate-500 font-medium mt-1">{{ appt.date }}</p>
+                            </div>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
                             <span class="text-sm font-medium text-slate-600">Мастер: {{ appt.master }}</span>
                             <button onclick="cancelAppt('{{ appt.date }}')" class="text-xs text-rose-600 hover:text-rose-700 font-bold px-3 py-1.5 rounded-full bg-rose-50">Отменить</button>
                         </div>
@@ -57,62 +160,132 @@
                 {% endfor %}
                 </div>
             {% else %}
-                <div class="text-center py-8">
-                    <p class="text-slate-500">У вас пока нет предстоящих записей. Самое время забронировать время в разделе записи!</p>
+                <div class="text-center py-8 bg-rose-50/40 rounded-[24px] border border-dashed border-rose-200">
+                    <p class="text-slate-500">У вас пока нет предстоящих записей. Самое время выбрать красивое время в разделе записи.</p>
                 </div>
             {% endif %}
+
+            <div class="mt-6 pt-6 border-t border-slate-100">
+                <a href="/booking" class="w-full inline-flex justify-center bg-gradient-to-r from-pink-600 to-fuchsia-600 text-white px-6 py-3.5 rounded-full text-sm font-semibold hover:opacity-95 transition shadow-md shadow-fuchsia-100">
+                    Перейти к записи
+                </a>
+            </div>
         </section>
     </div>
 
-    <!-- Колонка с историей -->
-    <div class="space-y-8">
-        <!-- Раздел: Добавить прошлую услугу (Симуляция) -->
-        <section class="salon-card rounded-[28px] border border-white/40 p-6">
-            <h3 class="brand-serif text-2xl font-bold text-slate-900 mb-2">Обновить историю услуг</h3>
-            <p class="text-sm text-slate-500 mb-4">Выберите услуги, которые клиент делал ранее, чтобы ИИ подбирал более точные предложения.</p>
-            <form method="POST" action="/api/add_history" class="flex flex-col gap-3">
-                <select name="service" class="px-4 py-3 bg-white border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-pink-300 font-medium text-slate-700">
-                    {% for s in data.services_list %}
-                    <option value="{{ s.name }}">{{ s.name }} ({{ s.price }} ₽)</option>
+    <section class="salon-card rounded-[32px] border border-white/40 p-6 md:p-8">
+        <div class="flex items-end justify-between gap-4 mb-6">
+            <div>
+                <div class="inline-flex items-center gap-2 salon-chip px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[0.18em] text-pink-700 mb-3">
+                    clients speak
+                </div>
+                <h3 class="brand-serif text-4xl font-bold text-slate-900">Клиенты говорят...</h3>
+            </div>
+            <div class="hidden md:block text-sm text-slate-400">мягкие отзывы, как в референсе</div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="salon-chip rounded-[24px] p-5 hover-lift">
+                <p class="text-slate-600 leading-relaxed text-sm">«Очень уютное пространство, всё выглядит нежно и дорого. Хочется возвращаться снова.»</p>
+                <p class="mt-4 text-xs uppercase tracking-[0.16em] text-pink-600 font-bold">Алина</p>
+            </div>
+            <div class="salon-chip rounded-[24px] p-5 hover-lift">
+                <p class="text-slate-600 leading-relaxed text-sm">«Понравилось, что сайт красивый, а запись понятная. Сразу видно ощущение премиального салона.»</p>
+                <p class="mt-4 text-xs uppercase tracking-[0.16em] text-pink-600 font-bold">Мария</p>
+            </div>
+            <div class="salon-chip rounded-[24px] p-5 hover-lift">
+                <p class="text-slate-600 leading-relaxed text-sm">«AI подбирает услугу очень аккуратно, без лишней сухости. Очень нравится такой подход.»</p>
+                <p class="mt-4 text-xs uppercase tracking-[0.16em] text-pink-600 font-bold">Юлия</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="salon-card rounded-[32px] border border-white/40 p-6 md:p-8">
+        <div class="flex items-end justify-between gap-4 mb-6">
+            <div>
+                <div class="inline-flex items-center gap-2 salon-chip px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[0.18em] text-pink-700 mb-3">
+                    gallery of services
+                </div>
+                <h3 class="brand-serif text-4xl font-bold text-slate-900">Галерея услуг</h3>
+                <p class="text-sm text-slate-500 mt-2">Плитка с мягкими изображениями создает визуальный ритм, похожий на лендинг Aura.</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for s in data.services_list[:6] %}
+            <a href="/service/{{ s.name }}" class="group relative overflow-hidden rounded-[24px] min-h-[220px] hover-lift border border-white/40">
+                <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80')] bg-cover bg-center"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/55 via-slate-900/20 to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-br from-pink-100/15 via-transparent to-fuchsia-100/15"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-5 text-white">
+                    <p class="text-xs uppercase tracking-[0.18em] text-white/75 mb-2">service</p>
+                    <h4 class="brand-serif text-2xl font-bold leading-tight">{{ s.name }}</h4>
+                    <p class="mt-2 text-sm text-white/90">от {{ s.price }} ₽</p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="salon-card rounded-[32px] border border-white/40 p-6 md:p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+            <div>
+                <div class="inline-flex items-center gap-2 salon-chip px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[0.18em] text-pink-700 mb-4">
+                    your master
+                </div>
+                <h3 class="brand-serif text-4xl font-bold text-slate-900">Наш мастер</h3>
+                <p class="text-slate-500 mt-3 leading-relaxed max-w-xl">Внимательный AI-помощник и дружелюбная команда помогают выбрать услугу, подобрать время и быстро попасть к нужному мастеру без лишних шагов.</p>
+                <div class="mt-5 flex flex-col sm:flex-row gap-3">
+                    <a href="/qa" class="salon-chip text-pink-700 px-5 py-3 rounded-full text-sm font-semibold text-center">Спросить ИИ</a>
+                    <a href="/booking" class="bg-slate-900 text-white px-5 py-3 rounded-full text-sm font-semibold text-center hover:opacity-95 transition">Записаться сейчас</a>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="rounded-[24px] overflow-hidden min-h-[170px] bg-[url('https://images.unsplash.com/photo-1522337660859-02fbefca4702?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80')] bg-cover bg-center hover-lift"></div>
+                <div class="rounded-[24px] overflow-hidden min-h-[170px] bg-[url('https://images.unsplash.com/photo-1519014816548-bf5fe059798b?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80')] bg-cover bg-center hover-lift"></div>
+                <div class="rounded-[24px] overflow-hidden min-h-[170px] bg-[url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80')] bg-cover bg-center hover-lift"></div>
+                <div class="rounded-[24px] overflow-hidden min-h-[170px] bg-[url('https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80')] bg-cover bg-center hover-lift"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="salon-card rounded-[32px] border border-white/40 p-6 md:p-8">
+        <div class="flex items-end justify-between gap-4 mb-6">
+            <div>
+                <div class="inline-flex items-center gap-2 salon-chip px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[0.18em] text-pink-700 mb-3">
+                    recent updates
+                </div>
+                <h3 class="brand-serif text-4xl font-bold text-slate-900">Ваша история визитов</h3>
+            </div>
+        </div>
+        
+        {% if data.history %}
+            <div class="overflow-hidden rounded-[24px] border border-slate-100">
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-rose-50 text-slate-500 font-medium text-xs uppercase border-b border-slate-200">
+                        <tr>
+                            <th class="px-4 py-3">Услуга</th>
+                            <th class="px-4 py-3">Дата</th>
+                            <th class="px-4 py-3 text-right">Стоимость</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for visit in data.history %}
+                        <tr class="border-b border-slate-100 last:border-0 hover:bg-rose-50/60 transition">
+                            <td class="px-4 py-4 font-medium text-slate-800">{{ visit.service }}</td>
+                            <td class="px-4 py-4 text-slate-500">{{ visit.date }}</td>
+                            <td class="px-4 py-4 text-right font-semibold text-slate-700">{{ visit.price }} ₽</td>
+                        </tr>
                     {% endfor %}
-                </select>
-                <button type="submit" class="bg-gradient-to-r from-pink-600 to-fuchsia-600 text-white font-semibold px-5 py-3 rounded-full hover:opacity-95 transition shadow-md shadow-fuchsia-100">Добавить в историю</button>
-            </form>
-        </section>
-
-        <!-- История визитов -->
-        <section class="salon-card rounded-[28px] border border-white/40 p-6">
-            <h2 class="brand-serif text-3xl font-bold text-slate-900 mb-5 pb-4 border-b border-slate-100">Ваша история визитов</h2>
-            
-            {% if data.history %}
-                <div class="overflow-hidden rounded-xl border border-slate-100">
-                    <table class="w-full text-sm text-left">
-                        <thead class="bg-rose-50 text-slate-500 font-medium text-xs uppercase border-b border-slate-200">
-                            <tr>
-                                <th class="px-4 py-3">Услуга</th>
-                                <th class="px-4 py-3">Дата</th>
-                                <th class="px-4 py-3 text-right">Стоимость</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for visit in data.history %}
-                            <tr class="border-b border-slate-100 last:border-0 hover:bg-rose-50/60 transition">
-                                <td class="px-4 py-4 font-medium text-slate-800">{{ visit.service }}</td>
-                                <td class="px-4 py-4 text-slate-500">{{ visit.date }}</td>
-                                <td class="px-4 py-4 text-right font-semibold text-slate-700">{{ visit.price }} ₽</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                <div class="text-center py-8">
-                    <p class="text-slate-500">У вас пока нет истории визитов. Добавьте услуги выше для симуляции!</p>
-                </div>
-            {% endif %}
-        </section>
-    </div>
-
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-8 bg-rose-50/40 rounded-[24px] border border-dashed border-rose-200">
+                <p class="text-slate-500">У вас пока нет истории визитов. Добавьте услуги выше для симуляции!</p>
+            </div>
+        {% endif %}
+    </section>
 </div>
 {% endblock %}
 

@@ -49,6 +49,49 @@
             background: linear-gradient(135deg, rgba(253, 242, 248, 0.95), rgba(255, 247, 237, 0.95));
             border: 1px solid rgba(251, 191, 36, 0.16);
         }
+
+        .floating-orb {
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .floating-orb.delay-1 {
+            animation-delay: -2s;
+        }
+
+        .floating-orb.delay-2 {
+            animation-delay: -4s;
+        }
+
+        .fade-up {
+            animation: fadeUp 0.85s ease both;
+        }
+
+        .fade-up.delay-1 {
+            animation-delay: 0.08s;
+        }
+
+        .fade-up.delay-2 {
+            animation-delay: 0.16s;
+        }
+
+        .hover-lift {
+            transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.10);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(-12px) translateX(8px); }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
     {% block extra_head %}{% endblock %}
 </head>

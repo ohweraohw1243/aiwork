@@ -2,38 +2,92 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вход | Стиль и Грация</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(244, 114, 182, 0.16), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(196, 181, 253, 0.22), transparent 24%),
+                linear-gradient(180deg, #fffafc 0%, #f8fafc 100%);
+        }
+        .brand-serif { font-family: 'Cormorant Garamond', serif; }
+        .glass-card { background: rgba(255,255,255,0.84); backdrop-filter: blur(18px); box-shadow: 0 20px 60px rgba(15,23,42,0.08); }
+        .floating-orb { animation: float 8s ease-in-out infinite; }
+        .floating-orb.delay-1 { animation-delay: -2s; }
+        .floating-orb.delay-2 { animation-delay: -4s; }
+        @keyframes float { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+    </style>
 </head>
-<body class="bg-slate-50 flex items-center justify-center min-h-screen font-sans">
-    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 max-w-sm w-full">
-        <h1 class="text-2xl font-bold text-center text-slate-900 mb-6">Вход в систему</h1>
-        
-        {% if error %}
-        <div class="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-4">
-            {{ error }}
+<body class="min-h-screen text-slate-800 flex items-center justify-center p-4">
+    <div class="relative w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-6 items-stretch">
+        <div class="glass-card rounded-[32px] p-8 md:p-12 relative overflow-hidden">
+            <div class="absolute top-8 left-8 h-24 w-24 rounded-full bg-pink-200/40 blur-3xl floating-orb"></div>
+            <div class="absolute bottom-6 right-10 h-20 w-20 rounded-full bg-fuchsia-200/40 blur-3xl floating-orb delay-1"></div>
+
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[0.18em] text-pink-700 bg-gradient-to-r from-rose-50 to-fuchsia-50 border border-pink-100 mb-6">
+                style & grace
+            </div>
+            <h1 class="brand-serif text-5xl md:text-7xl font-bold text-slate-900 leading-[0.95]">Вход в систему</h1>
+            <p class="text-slate-500 mt-5 max-w-lg text-base md:text-lg leading-relaxed">
+                Нежная эстетика, удобная запись и AI-помощник для красоты и ухода. Войдите, чтобы продолжить в личном кабинете салона.
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-8">
+                <div class="rounded-[24px] bg-white/75 border border-slate-100 p-4">
+                    <p class="text-xs uppercase tracking-[0.18em] text-pink-600 font-bold mb-2">pastel</p>
+                    <p class="text-sm text-slate-600">Мягкая цветовая гамма</p>
+                </div>
+                <div class="rounded-[24px] bg-white/75 border border-slate-100 p-4">
+                    <p class="text-xs uppercase tracking-[0.18em] text-pink-600 font-bold mb-2">mobile</p>
+                    <p class="text-sm text-slate-600">Адаптив под телефон</p>
+                </div>
+                <div class="rounded-[24px] bg-white/75 border border-slate-100 p-4">
+                    <p class="text-xs uppercase tracking-[0.18em] text-pink-600 font-bold mb-2">ai</p>
+                    <p class="text-sm text-slate-600">Подсказки по услугам</p>
+                </div>
+            </div>
         </div>
-        {% endif %}
-        
-        <form method="POST" action="/login" class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
-                <input type="email" name="email" required value="test@test.ru"
-                       class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition">
+
+        <div class="glass-card rounded-[32px] p-6 md:p-8 flex items-center">
+            <div class="w-full max-w-md mx-auto">
+                <div class="text-center mb-7">
+                    <h2 class="brand-serif text-4xl font-bold text-slate-900">Добро пожаловать</h2>
+                    <p class="text-slate-500 mt-2">Введите данные, чтобы открыть личный кабинет.</p>
+                </div>
+
+                {% if error %}
+                <div class="bg-rose-50 text-rose-600 p-4 rounded-2xl text-sm mb-4 border border-rose-100">
+                    {{ error }}
+                </div>
+                {% endif %}
+
+                <form method="POST" action="/login" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                        <input type="email" name="email" required value="test@test.ru"
+                               class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-pink-300 outline-none transition shadow-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Пароль</label>
+                        <input type="password" name="password" required value="123"
+                               class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-pink-300 outline-none transition shadow-sm">
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-pink-600 to-fuchsia-600 text-white font-semibold py-3.5 rounded-full hover:opacity-95 transition shadow-lg shadow-fuchsia-100">
+                        Войти
+                    </button>
+                </form>
+
+                <p class="text-center text-sm text-slate-500 mt-6">
+                    Нет аккаунта? <a href="/register" class="text-pink-600 hover:text-pink-700 font-semibold">Зарегистрироваться</a>
+                </p>
             </div>
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Пароль</label>
-                <input type="password" name="password" required value="123"
-                       class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition">
-            </div>
-            <button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-2.5 rounded-lg hover:bg-indigo-700 transition">
-                Войти
-            </button>
-        </form>
-        
-        <p class="text-center text-sm text-slate-500 mt-6">
-            Нет аккаунта? <a href="/register" class="text-indigo-600 hover:underline">Зарегистрироваться</a>
-        </p>
+        </div>
     </div>
 </body>
 </html>
