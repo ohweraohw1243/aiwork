@@ -106,7 +106,7 @@ def login():
         user = User.query.filter_by(email=email).first()
         if user and user.password == password:
             session['user_id'] = user.id
-            return redirect(url_for('index'))
+            return redirect(url_for('cabinet'))
         return render_template('login.html', error="Неверный email или пароль")
     return render_template('login.html')
 
@@ -125,13 +125,13 @@ def register():
         db.session.commit()
         
         session['user_id'] = new_user.id
-        return redirect(url_for('index'))
+        return redirect(url_for('cabinet'))
     return render_template('register.html')
 
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('login'))
+    return redirect(url_for('landing'))
 
 @app.route('/api/cancel', methods=['POST'])
 def cancel_appointment():
@@ -201,15 +201,49 @@ def add_history():
         db.session.add(hist)
         db.session.commit()
         
-    return redirect(url_for('index'))
+    return redirect(url_for('cabinet'))
 
-# Главная страница (Профиль)
+# Публичная главная для незалогиненных пользователей
 @app.route('/')
-def index():
+def landing():
+    return render_template('landing.html')
+
+
+@app.route('/smart-booking')
+def smart_booking():
+    return render_template('smart_booking.html')
+
+
+@app.route('/api/prebooking_chat', methods=['POST'])
+def prebooking_chat():
+    data = request.json or {}
+    question = data.get('question', '').strip()
+
+    if not question:
+        return jsonify({"error": "Пустой вопрос"}), 400
+
+    prompt = f"""
+    Клиент пишет: "{question}"
+
+    Ты ассистент салона красоты. Твоя задача: мягко помочь клиенту выбрать услугу и перейти к записи.
+    Дай короткий ответ (2-4 предложения), уточни 1 важный вопрос при необходимости.
+    Не отвечай на темы вне салона красоты.
+    """
+    system_role = (
+        "Ты AI-ассистент салона красоты. Отвечай только по теме услуг салона, выбора процедуры, "
+        "ухода, подготовки к визиту и записи. Если вопрос не по теме салона, "
+        "вежливо откажись и предложи вернуться к выбору услуги."
+    )
+    return call_groq_api(prompt, system_role=system_role)
+
+
+# Личный кабинет клиента
+@app.route('/cabinet')
+def cabinet():
     if 'user_id' not in session:
         return redirect(url_for('login'))
         
-    user = User.query.get(session['user_id'])
+    user = db.session.get(User, session['user_id'])
     if not user:
         session.clear()
         return redirect(url_for('login'))
@@ -224,7 +258,7 @@ def index():
         "services_list": SERVICES_LIST
     }
     
-    return render_template('dashboard.html', data=display_data)
+    return render_template('cabinet.html', data=display_data)
 
 # Страница онлайн-записи
 @app.route('/booking')
@@ -232,7 +266,7 @@ def booking():
     if 'user_id' not in session:
         return redirect(url_for('login'))
         
-    user = User.query.get(session['user_id'])
+    user = db.session.get(User, session['user_id'])
     if not user:
         session.clear()
         return redirect(url_for('login'))
@@ -250,7 +284,7 @@ def booking():
 def services_page():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    user = User.query.get(session['user_id'])
+    user = db.session.get(User, session['user_id'])
     
     display_data = {
         "name": user.name if user else "Гость",
@@ -262,7 +296,7 @@ def services_page():
 def service_detail(service_name):
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    user = User.query.get(session['user_id'])
+    user = db.session.get(User, session['user_id'])
     
     # Ищем услугу в списке
     service_info = next((s for s in SERVICES_LIST if s["name"] == service_name), None)
@@ -279,7 +313,7 @@ def service_detail(service_name):
 def qa_page():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    user = User.query.get(session['user_id'])
+    user = db.session.get(User, session['user_id'])
     
     display_data = {
         "name": user.name if user else "Гость"
@@ -357,7 +391,7 @@ def generate_offer():
     if 'user_id' not in session:
         return jsonify({"error": "Unauthorized"}), 401
         
-    user = User.query.get(session['user_id'])
+    user = db.session.get(User, session['user_id'])
     if not user:
         session.clear()
         return jsonify({"error": "User not found"}), 401

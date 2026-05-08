@@ -51,7 +51,7 @@
             body: JSON.stringify({date})
         });
         if(res.ok) {
-            window.location.href = '/'; // Возвращаем в профиль
+            window.location.href = '/cabinet'; // Возвращаем в личный кабинет
         } else {
             alert('Ошибка при записи');
         }
