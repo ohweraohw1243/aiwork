@@ -100,33 +100,41 @@ with app.app_context():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    next_url = request.args.get('next')
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
+        next_url = request.form.get('next')
         user = User.query.filter_by(email=email).first()
         if user and user.password == password:
             session['user_id'] = user.id
+            if next_url and next_url.startswith('/'):
+                return redirect(next_url)
             return redirect(url_for('cabinet'))
-        return render_template('login.html', error="Неверный email или пароль")
-    return render_template('login.html')
+        return render_template('login.html', error="Неверный email или пароль", next_url=next_url)
+    return render_template('login.html', next_url=next_url)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    next_url = request.args.get('next')
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
         name = request.form.get('name')
+        next_url = request.form.get('next')
         
         if User.query.filter_by(email=email).first():
-            return render_template('register.html', error="Пользователь с таким email уже существует")
+            return render_template('register.html', error="Пользователь с таким email уже существует", next_url=next_url)
         
         new_user = User(email=email, password=password, name=name)
         db.session.add(new_user)
         db.session.commit()
         
         session['user_id'] = new_user.id
+        if next_url and next_url.startswith('/'):
+            return redirect(next_url)
         return redirect(url_for('cabinet'))
-    return render_template('register.html')
+    return render_template('register.html', next_url=next_url)
 
 @app.route('/logout')
 def logout():
@@ -211,7 +219,9 @@ def landing():
 
 @app.route('/smart-booking')
 def smart_booking():
-    return render_template('smart_booking.html')
+    is_authenticated = 'user_id' in session
+    booking_url = '/booking' if is_authenticated else url_for('login', next='/booking')
+    return render_template('smart_booking.html', is_authenticated=is_authenticated, booking_url=booking_url)
 
 
 @app.route('/api/prebooking_chat', methods=['POST'])
@@ -241,7 +251,7 @@ def prebooking_chat():
 @app.route('/cabinet')
 def cabinet():
     if 'user_id' not in session:
-        return redirect(url_for('login'))
+        return redirect(url_for('login', next=request.path))
         
     user = db.session.get(User, session['user_id'])
     if not user:
@@ -264,7 +274,7 @@ def cabinet():
 @app.route('/booking')
 def booking():
     if 'user_id' not in session:
-        return redirect(url_for('login'))
+        return redirect(url_for('login', next=request.path))
         
     user = db.session.get(User, session['user_id'])
     if not user:
@@ -283,7 +293,7 @@ def booking():
 @app.route('/services')
 def services_page():
     if 'user_id' not in session:
-        return redirect(url_for('login'))
+        return redirect(url_for('login', next=request.path))
     user = db.session.get(User, session['user_id'])
     
     display_data = {
@@ -295,7 +305,7 @@ def services_page():
 @app.route('/service/<path:service_name>')
 def service_detail(service_name):
     if 'user_id' not in session:
-        return redirect(url_for('login'))
+        return redirect(url_for('login', next=request.path))
     user = db.session.get(User, session['user_id'])
     
     # Ищем услугу в списке
@@ -312,7 +322,7 @@ def service_detail(service_name):
 @app.route('/qa')
 def qa_page():
     if 'user_id' not in session:
-        return redirect(url_for('login'))
+        return redirect(url_for('login', next=request.path))
     user = db.session.get(User, session['user_id'])
     
     display_data = {
