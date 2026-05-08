@@ -2,33 +2,39 @@
 {% block title %}Информация об услуге{% endblock %}
 
 {% block content %}
-<div class="max-w-3xl mx-auto">
-    <a href="/services" class="text-sm text-indigo-500 hover:text-indigo-700 font-medium mb-6 inline-flex items-center gap-1">
+<div class="max-w-4xl mx-auto">
+    <a href="/services" class="text-sm text-pink-600 hover:text-pink-700 font-medium mb-6 inline-flex items-center gap-1">
         &larr; Назад к списку услуг
     </a>
 
-    <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-        <h2 class="text-3xl font-extrabold text-slate-900 mb-2">{{ data.service.name }}</h2>
-        <p class="text-xl text-indigo-600 font-semibold mb-8">от {{ data.service.price }} ₽</p>
-
-        <div class="bg-gradient-to-br from-indigo-50 to-purple-50 p-6 rounded-2xl border border-indigo-100">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold shadow-sm">AI</div>
-                <h3 class="text-lg font-bold text-slate-800">Описание от ИИ-эксперта</h3>
+    <div class="salon-card p-8 rounded-[28px] border border-white/40 relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-pink-100/50 blur-3xl"></div>
+        <div class="relative">
+            <div class="inline-flex items-center gap-2 salon-chip px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[0.18em] text-pink-700 mb-4">
+                service spotlight
             </div>
-            
-            <div id="ai-content" class="text-slate-700 text-[15px] leading-relaxed whitespace-pre-wrap">
-                <div class="flex items-center gap-3 animate-pulse text-indigo-400 py-4">
-                    <div class="w-6 h-6 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-                    <span>Генерирую авторское описание...</span>
+            <h2 class="brand-serif text-4xl md:text-5xl font-bold text-slate-900 mb-2">{{ data.service.name }}</h2>
+            <p class="text-xl text-pink-600 font-semibold mb-8">от {{ data.service.price }} ₽</p>
+
+            <div class="bg-gradient-to-br from-rose-50 via-white to-fuchsia-50 p-6 rounded-[24px] border border-rose-100 shadow-sm">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-pink-500 to-fuchsia-500 text-white flex items-center justify-center font-bold shadow-sm">AI</div>
+                    <h3 class="text-lg font-bold text-slate-800">Описание от ИИ-эксперта</h3>
+                </div>
+                
+                <div id="ai-content" class="text-slate-700 text-[15px] leading-relaxed whitespace-pre-wrap">
+                    <div class="flex items-center gap-3 animate-pulse text-pink-400 py-4">
+                        <div class="w-6 h-6 border-4 border-pink-100 border-t-pink-500 rounded-full animate-spin"></div>
+                        <span>Генерирую авторское описание...</span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="mt-8 pt-6 border-t border-slate-100 text-center">
-            <a href="/booking" class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-3.5 rounded-xl text-sm font-semibold hover:opacity-90 transition transform hover:-translate-y-0.5 inline-block shadow-md">
+            <div class="mt-8 pt-6 border-t border-slate-100 text-center">
+                <a href="/booking" class="bg-gradient-to-r from-pink-600 to-fuchsia-600 text-white px-8 py-3.5 rounded-full text-sm font-semibold hover:opacity-95 transition transform hover:-translate-y-0.5 inline-block shadow-md shadow-fuchsia-100">
                 Перейти к онлайн-записи
-            </a>
+                </a>
+            </div>
         </div>
     </div>
 </div>

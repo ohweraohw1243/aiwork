@@ -2,18 +2,25 @@
 {% block title %}Наши услуги{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto mt-4 space-y-6">
-    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 text-center mb-8">
-        <h2 class="text-3xl font-extrabold text-slate-900 mb-3">Каталог услуг</h2>
-        <p class="text-slate-500 text-lg">Выберите услугу, чтобы узнать о ней подробнее (информация генерируется AI)</p>
+<div class="max-w-5xl mx-auto mt-4 space-y-6">
+    <div class="salon-card rounded-[28px] border border-white/40 p-8 text-center mb-8 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-pink-50 via-white to-fuchsia-50 opacity-80"></div>
+        <div class="relative">
+            <div class="inline-flex items-center gap-2 salon-chip px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[0.18em] text-pink-700 mb-4">
+                beauty menu
+            </div>
+            <h2 class="brand-serif text-4xl font-bold text-slate-900 mb-3">Каталог услуг</h2>
+            <p class="text-slate-500 text-lg max-w-2xl mx-auto">Выберите услугу, чтобы узнать о ней подробнее. Описание поможет AI и сделает выбор более осознанным.</p>
+        </div>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for s in data.services_list %}
-        <a href="/service/{{ s.name }}" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:border-indigo-300 hover:shadow-md transition transform hover:-translate-y-1 block">
-            <h3 class="font-bold text-slate-800 text-lg mb-2">{{ s.name }}</h3>
-            <p class="text-indigo-600 font-semibold">{{ s.price }} ₽</p>
-            <div class="mt-4 text-sm text-indigo-500 font-medium flex items-center gap-1 group-hover:text-indigo-700">
+        <a href="/service/{{ s.name }}" class="group salon-card p-6 rounded-[24px] border border-white/40 hover:border-pink-200 hover:shadow-xl transition transform hover:-translate-y-1 block relative overflow-hidden">
+            <div class="absolute top-0 right-0 h-24 w-24 rounded-full bg-pink-100/50 blur-2xl"></div>
+            <h3 class="brand-serif text-2xl font-bold text-slate-800 text-lg mb-2 relative">{{ s.name }}</h3>
+            <p class="text-pink-600 font-semibold text-lg relative">{{ s.price }} ₽</p>
+            <div class="mt-4 text-sm text-pink-500 font-medium flex items-center gap-1 group-hover:text-pink-700 relative">
                 Узнать подробнее у ИИ &rarr;
             </div>
         </a>
