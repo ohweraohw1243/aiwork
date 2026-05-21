@@ -3,94 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход | Стиль и Грация</title>
+    <title>Вход — Стиль и Грация</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: 'Manrope', sans-serif;
-            background:
-                radial-gradient(circle at top left, rgba(244, 114, 182, 0.16), transparent 28%),
-                radial-gradient(circle at bottom right, rgba(196, 181, 253, 0.22), transparent 24%),
-                linear-gradient(180deg, #fffafc 0%, #f8fafc 100%);
+        :root {
+            --noir: #07070A; --graphite: #111118; --surface: #18181F; --raised: #1F1F28;
+            --border: rgba(201,168,76,0.18); --border-hi: rgba(201,168,76,0.42);
+            --gold: #C9A84C; --gold-hi: #E4C97A; --gold-dim: rgba(201,168,76,0.10);
+            --cream: #EDE3D0; --cream-dim: #A89E8C; --mist: #6A6A7A;
         }
-        .brand-serif { font-family: 'Cormorant Garamond', serif; }
-        .glass-card { background: rgba(255,255,255,0.84); backdrop-filter: blur(18px); box-shadow: 0 20px 60px rgba(15,23,42,0.08); }
-        .floating-orb { animation: float 8s ease-in-out infinite; }
-        .floating-orb.delay-1 { animation-delay: -2s; }
-        .floating-orb.delay-2 { animation-delay: -4s; }
-        @keyframes float { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; }
+        body {
+            font-family: 'Jost', sans-serif;
+            font-weight: 300;
+            background-color: var(--noir);
+            color: var(--cream);
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.7;
+        }
+        .brand-serif { font-family: 'Playfair Display', serif; }
+        .fade-up { animation: fadeUp 0.85s cubic-bezier(0.22,1,0.36,1) both; }
+        .d1 { animation-delay: 0.1s; }
+        .d2 { animation-delay: 0.2s; }
+        .d3 { animation-delay: 0.3s; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+
+        .luxury-input {
+            width: 100%;
+            padding: 14px 18px;
+            background: var(--raised);
+            border: 1px solid var(--border);
+            color: var(--cream);
+            font-family: 'Jost', sans-serif;
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 0.03em;
+            border-radius: 2px;
+            outline: none;
+            transition: border-color 0.25s, background 0.25s;
+        }
+        .luxury-input::placeholder { color: var(--mist); }
+        .luxury-input:focus { border-color: var(--gold); background: var(--surface); }
+
+        .btn-gold {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #B8942E, #C9A84C, #DDB95E);
+            color: #07070A;
+            font-family: 'Jost', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all 0.35s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-gold::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transform: translateX(-150%);
+            transition: transform 0.6s ease;
+        }
+        .btn-gold:hover::after { transform: translateX(150%); }
+        .btn-gold:hover { box-shadow: 0 8px 40px rgba(201,168,76,0.3); }
     </style>
 </head>
-<body class="min-h-screen text-slate-800 flex items-center justify-center p-4">
-    <div class="relative w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-6 items-stretch">
-        <div class="glass-card rounded-[32px] p-8 md:p-12 relative overflow-hidden">
-            <div class="absolute top-8 left-8 h-24 w-24 rounded-full bg-pink-200/40 blur-3xl floating-orb"></div>
-            <div class="absolute bottom-6 right-10 h-20 w-20 rounded-full bg-fuchsia-200/40 blur-3xl floating-orb delay-1"></div>
+<body style="position: relative; z-index: 2;">
 
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[0.18em] text-pink-700 bg-gradient-to-r from-rose-50 to-fuchsia-50 border border-pink-100 mb-6">
-                style & grace
-            </div>
-            <h1 class="brand-serif text-5xl md:text-7xl font-bold text-slate-900 leading-[0.95]">Вход в систему</h1>
-            <p class="text-slate-500 mt-5 max-w-lg text-base md:text-lg leading-relaxed">
-                Войдите, чтобы продолжить запись, управлять своими визитами и получать персональные рекомендации по услугам.
-            </p>
-
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-8">
-                <div class="rounded-[24px] bg-white/75 border border-slate-100 p-4">
-                    <p class="text-xs uppercase tracking-[0.18em] text-pink-600 font-bold mb-2">записи</p>
-                    <p class="text-sm text-slate-600">Актуальные визиты и управление ими</p>
-                </div>
-                <div class="rounded-[24px] bg-white/75 border border-slate-100 p-4">
-                    <p class="text-xs uppercase tracking-[0.18em] text-pink-600 font-bold mb-2">история</p>
-                    <p class="text-sm text-slate-600">Посещения и рекомендации в кабинете</p>
-                </div>
-                <div class="rounded-[24px] bg-white/75 border border-slate-100 p-4">
-                    <p class="text-xs uppercase tracking-[0.18em] text-pink-600 font-bold mb-2">поддержка</p>
-                    <p class="text-sm text-slate-600">AI-помощник по услугам салона</p>
-                </div>
-            </div>
+    <!-- Left panel: image / brand -->
+    <div style="flex: 1; position: relative; display: none; flex-direction: column; justify-content: flex-end; padding: 52px; background: var(--graphite); border-right: 1px solid var(--border); min-height: 100vh;" class="lg:flex">
+        <div style="position: absolute; inset: 0; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                 alt="Beauty salon"
+                 style="width: 100%; height: 100%; object-fit: cover; filter: grayscale(15%) brightness(0.45) contrast(1.1);">
+            <div style="position: absolute; inset: 0; background: linear-gradient(0deg, rgba(7,7,10,0.95) 0%, rgba(7,7,10,0.3) 60%, transparent 100%);"></div>
         </div>
 
-        <div class="glass-card rounded-[32px] p-6 md:p-8 flex items-center">
-            <div class="w-full max-w-md mx-auto">
-                <div class="text-center mb-7">
-                    <h2 class="brand-serif text-4xl font-bold text-slate-900">Добро пожаловать</h2>
-                    <p class="text-slate-500 mt-2">Введите данные, чтобы открыть личный кабинет.</p>
+        <div style="position: relative; z-index: 2;">
+            <div style="width: 48px; height: 1px; background: var(--gold); margin-bottom: 20px;"></div>
+            <div class="brand-serif" style="font-size: 52px; font-weight: 500; color: var(--cream); line-height: 1; margin-bottom: 8px;">Стиль</div>
+            <div class="brand-serif" style="font-size: 52px; font-weight: 400; font-style: italic; color: var(--gold); line-height: 1; margin-bottom: 24px;">и Грация</div>
+            <p style="font-size: 13px; color: var(--cream-dim); line-height: 1.7; max-width: 320px; font-weight: 300;">
+                Премиальный салон красоты с AI-ассистентом для подбора процедур и онлайн-записью.
+            </p>
+
+            <div style="display: flex; gap: 32px; margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border);">
+                <div>
+                    <div class="brand-serif" style="font-size: 28px; color: var(--gold);">40+</div>
+                    <div style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mist);">услуг</div>
                 </div>
-
-                {% if error %}
-                <div class="bg-rose-50 text-rose-600 p-4 rounded-2xl text-sm mb-4 border border-rose-100">
-                    {{ error }}
+                <div>
+                    <div class="brand-serif" style="font-size: 28px; color: var(--gold);">12</div>
+                    <div style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mist);">мастеров</div>
                 </div>
-                {% endif %}
-
-                <form method="POST" action="/login{% if next_url %}?next={{ next_url }}{% endif %}" class="space-y-4">
-                    {% if next_url %}
-                    <input type="hidden" name="next" value="{{ next_url }}">
-                    {% endif %}
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Email</label>
-                        <input type="email" name="email" required value="test@test.ru"
-                               class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-pink-300 outline-none transition shadow-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Пароль</label>
-                        <input type="password" name="password" required value="123"
-                               class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-pink-300 outline-none transition shadow-sm">
-                    </div>
-                    <button type="submit" class="w-full bg-gradient-to-r from-pink-600 to-fuchsia-600 text-white font-semibold py-3.5 rounded-full hover:opacity-95 transition shadow-lg shadow-fuchsia-100">
-                        Войти
-                    </button>
-                </form>
-
-                <p class="text-center text-sm text-slate-500 mt-6">
-                    Нет аккаунта? <a href="/register{% if next_url %}?next={{ next_url }}{% endif %}" class="text-pink-600 hover:text-pink-700 font-semibold">Зарегистрироваться</a>
-                </p>
+                <div>
+                    <div class="brand-serif" style="font-size: 28px; color: var(--gold);">AI</div>
+                    <div style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mist);">assistant</div>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Right panel: form -->
+    <div style="width: 100%; max-width: 520px; display: flex; flex-direction: column; justify-content: center; padding: 52px 48px; min-height: 100vh; background: var(--noir);">
+        <!-- Logo (mobile / standalone) -->
+        <div style="margin-bottom: 52px;" class="fade-up">
+            <a href="/" style="display: inline-flex; align-items: center; gap: 12px; text-decoration: none;">
+                <div style="width: 34px; height: 34px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; border-radius: 2px;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
+                    </svg>
+                </div>
+                <div class="brand-serif" style="font-size: 17px; color: var(--cream-dim); font-style: italic;">Стиль и Грация</div>
+            </a>
+        </div>
+
+        <div class="fade-up d1" style="margin-bottom: 36px;">
+            <div style="font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px;">добро пожаловать</div>
+            <h1 class="brand-serif" style="font-size: 42px; font-weight: 500; color: var(--cream); line-height: 1.05; margin-bottom: 12px;">Вход в кабинет</h1>
+            <p style="font-size: 13px; color: var(--mist); line-height: 1.65; font-weight: 300;">
+                Введите данные для доступа к личному кабинету, записям и AI-рекомендациям.
+            </p>
+        </div>
+
+        {% if error %}
+        <div class="fade-up d1" style="background: rgba(220,80,80,0.08); border: 1px solid rgba(220,80,80,0.25); color: #E8988C; padding: 14px 18px; border-radius: 2px; font-size: 13px; margin-bottom: 24px;">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="/login{% if next_url %}?next={{ next_url }}{% endif %}" class="fade-up d2" style="display: flex; flex-direction: column; gap: 20px;">
+            {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
+
+            <div>
+                <label style="display: block; font-size: 10px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--mist); margin-bottom: 10px;">Email</label>
+                <input type="email" name="email" required value="test@test.ru" class="luxury-input" placeholder="your@email.com">
+            </div>
+
+            <div>
+                <label style="display: block; font-size: 10px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--mist); margin-bottom: 10px;">Пароль</label>
+                <input type="password" name="password" required value="123" class="luxury-input" placeholder="••••••••">
+            </div>
+
+            <div style="padding-top: 8px;">
+                <button type="submit" class="btn-gold">Войти</button>
+            </div>
+        </form>
+
+        <p class="fade-up d3" style="font-size: 12px; color: var(--mist); margin-top: 28px; text-align: center; letter-spacing: 0.02em;">
+            Нет аккаунта?
+            <a href="/register{% if next_url %}?next={{ next_url }}{% endif %}" style="color: var(--gold); text-decoration: none; font-weight: 500; margin-left: 4px;">Зарегистрироваться</a>
+        </p>
+    </div>
+
 </body>
 </html>

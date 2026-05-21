@@ -1,27 +1,38 @@
 {% extends "base.html" %}
-{% block title %}Наши услуги{% endblock %}
+{% block title %}Услуги{% endblock %}
 
 {% block content %}
-<div class="max-w-5xl mx-auto mt-4 space-y-6">
-    <div class="salon-card rounded-[28px] border border-white/40 p-8 text-center mb-8 relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-r from-pink-50 via-white to-fuchsia-50 opacity-80"></div>
-        <div class="relative">
-            <div class="inline-flex items-center gap-2 salon-chip px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[0.18em] text-pink-700 mb-4">
-                beauty menu
-            </div>
-            <h2 class="brand-serif text-4xl font-bold text-slate-900 mb-3">Каталог услуг</h2>
-            <p class="text-slate-500 text-lg max-w-2xl mx-auto">Выберите услугу, чтобы узнать о ней подробнее. Описание поможет AI и сделает выбор более осознанным.</p>
+<div style="display: flex; flex-direction: column; gap: 24px;">
+    <div class="luxury-card fade-up" style="border-radius: 3px; padding: 36px 44px; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+            <div class="luxury-chip" style="margin-bottom: 14px;">каталог</div>
+            <h1 class="brand-serif" style="font-size: 42px; color: var(--cream); font-weight: 500;">Наши услуги</h1>
+            <p style="font-size: 13px; color: var(--mist); margin-top: 8px; font-weight: 300;">AI-рекомендации по каждой процедуре</p>
         </div>
+        <a href="/smart-booking" class="btn-gold">AI-подбор услуги</a>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for s in data.services_list %}
-        <a href="/service/{{ s.name }}" class="group salon-card p-6 rounded-[24px] border border-white/40 hover:border-pink-200 hover:shadow-xl transition transform hover:-translate-y-1 block relative overflow-hidden">
-            <div class="absolute top-0 right-0 h-24 w-24 rounded-full bg-pink-100/50 blur-2xl"></div>
-            <h3 class="brand-serif text-2xl font-bold text-slate-800 text-lg mb-2 relative">{{ s.name }}</h3>
-            <p class="text-pink-600 font-semibold text-lg relative">{{ s.price }} ₽</p>
-            <div class="mt-4 text-sm text-pink-500 font-medium flex items-center gap-1 group-hover:text-pink-700 relative">
-                Узнать подробнее у ИИ &rarr;
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2px;" class="fade-up d1">
+        {% for service in data.services_list %}
+        <a href="/services/{{ service.id }}" style="text-decoration: none;" class="hover-rise">
+            <div class="luxury-card" style="border-radius: 3px; padding: 28px 32px; height: 100%; display: flex; flex-direction: column;">
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px;">
+                    <div>
+                        <div style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px;">{{ service.category }}</div>
+                        <h3 class="brand-serif" style="font-size: 22px; color: var(--cream); font-weight: 500; line-height: 1.2;">{{ service.name }}</h3>
+                    </div>
+                    <div style="text-align: right; flex-shrink: 0; margin-left: 16px;">
+                        <div class="brand-serif" style="font-size: 24px; color: var(--gold); font-weight: 500;">{{ service.price }}</div>
+                        <div style="font-size: 10px; color: var(--mist); margin-top: 2px;">₽</div>
+                    </div>
+                </div>
+                <p style="font-size: 13px; color: var(--mist); line-height: 1.65; font-weight: 300; flex: 1;">{{ service.description }}</p>
+                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;">
+                    <div style="font-size: 11px; color: var(--mist);">{{ service.duration }}</div>
+                    <div style="font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 6px;">
+                        Подробнее <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </div>
+                </div>
             </div>
         </a>
         {% endfor %}

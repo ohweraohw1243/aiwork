@@ -2,59 +2,90 @@
 {% block title %}Онлайн-запись{% endblock %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto">
-    <section class="salon-card p-6 md:p-8 rounded-[28px] border border-white/40">
-        <div class="inline-flex items-center gap-2 salon-chip px-3 py-1 rounded-full text-xs font-bold uppercase tracking-[0.18em] text-pink-700 mb-4">
-            online booking
-        </div>
-        <h2 class="brand-serif text-4xl font-bold text-slate-900 mb-2">Онлайн-запись</h2>
-        <p class="text-slate-500 mb-8 max-w-xl">Выберите удобное для вас время и мастера. Запись сразу появится в вашем профиле и будет готова к управлению.</p>
-        
-        {% if data.available_slots %}
-        <div class="space-y-4">
-            {% for slot in data.available_slots %}
-            <div class="group bg-white/90 p-5 rounded-[24px] border border-slate-200 hover:border-pink-300 hover:shadow-xl transition cursor-pointer relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div class="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-pink-400 to-fuchsia-500"></div>
-                <div class="flex items-center gap-4">
-                    <div class="p-[2px] rounded-full bg-gradient-to-br from-pink-400 to-fuchsia-500 shadow-lg shadow-pink-100">
-                        <img src="{{ slot.avatar }}" alt="{{ slot.master }}" class="w-16 h-16 rounded-full ring-4 ring-white">
-                    </div>
-                    <div>
-                        <p class="font-bold text-xl text-slate-800">{{ slot.date }}</p>
-                        <p class="text-sm text-slate-500 mt-1">Мастер салона: <span class="font-bold text-pink-600">{{ slot.master }}</span></p>
-                    </div>
-                </div>
-                <button onclick="bookAppt('{{ slot.date }}')" class="w-full sm:w-auto bg-rose-50 border border-rose-100 text-rose-700 group-hover:bg-gradient-to-r group-hover:from-pink-600 group-hover:to-fuchsia-600 group-hover:text-white px-6 py-3 rounded-full text-sm font-bold transition shadow-sm">
-                    Выбрать время
-                </button>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="text-center py-12 bg-rose-50 rounded-[24px] border border-dashed border-rose-200">
-            <svg class="w-12 h-12 text-rose-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            <p class="text-slate-500 font-medium">К сожалению, пока нет свободных окон.</p>
-            <p class="text-sm text-slate-400 mt-1">Возвращайтесь чуть позже!</p>
+<div style="display: grid; grid-template-columns: 3fr 2fr; gap: 2px; max-width: 1000px;">
+
+    <div class="luxury-card fade-up" style="border-radius: 3px; padding: 44px 48px;">
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); border-radius: 3px 3px 0 0;"></div>
+        <div class="luxury-chip" style="margin-bottom: 14px;">онлайн-запись</div>
+        <h1 class="brand-serif" style="font-size: 38px; color: var(--cream); font-weight: 500; margin-bottom: 8px;">Записаться</h1>
+        <p style="font-size: 13px; color: var(--mist); margin-bottom: 36px; font-weight: 300;">Выберите услугу, мастера и удобное время</p>
+
+        {% if message %}
+        <div style="background: rgba(180,212,160,0.08); border: 1px solid rgba(180,212,160,0.25); color: #A8D090; padding: 14px 18px; border-radius: 2px; font-size: 13px; margin-bottom: 24px;">
+            {{ message }}
         </div>
         {% endif %}
-    </section>
-</div>
-{% endblock %}
 
-{% block scripts %}
-<script>
-    async function bookAppt(date) {
-        if(!confirm('Записаться на ' + date + '?')) return;
-        const res = await fetch('/api/book', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({date})
-        });
-        if(res.ok) {
-            window.location.href = '/cabinet'; // Возвращаем в личный кабинет
-        } else {
-            alert('Ошибка при записи');
-        }
-    }
-</script>
+        <form method="POST" action="/booking" style="display: flex; flex-direction: column; gap: 20px;">
+            <div>
+                <label class="luxury-label">Услуга</label>
+                <div style="position: relative;">
+                    <select name="service" class="luxury-select">
+                        {% for service in data.services_list %}
+                        <option value="{{ service.name }}" {% if selected_service == service.id %}selected{% endif %}>
+                            {{ service.name }} — {{ service.price }} ₽
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <div style="position: absolute; right: 18px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--mist);">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <label class="luxury-label">Мастер</label>
+                <div style="position: relative;">
+                    <select name="master" class="luxury-select">
+                        {% for master in data.masters %}
+                        <option value="{{ master }}">{{ master }}</option>
+                        {% endfor %}
+                    </select>
+                    <div style="position: absolute; right: 18px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--mist);">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <label class="luxury-label">Дата и время</label>
+                <input type="datetime-local" name="datetime" required class="luxury-input" style="color-scheme: dark;">
+            </div>
+
+            <div style="padding-top: 8px;">
+                <button type="submit" class="btn-gold" style="width: 100%; padding: 15px;">Подтвердить запись</button>
+            </div>
+        </form>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+        <div class="luxury-card fade-up d1" style="border-radius: 3px; padding: 36px;">
+            <div class="luxury-chip" style="margin-bottom: 14px;">подсказка</div>
+            <h3 class="brand-serif" style="font-size: 24px; color: var(--cream); margin-bottom: 16px; font-weight: 500;">Не знаете что выбрать?</h3>
+            <p style="font-size: 13px; color: var(--mist); line-height: 1.65; font-weight: 300; margin-bottom: 20px;">
+                Воспользуйтесь AI-ассистентом — он задаст несколько вопросов и подберёт подходящую процедуру.
+            </p>
+            <a href="/smart-booking" class="btn-gold" style="display: block; text-align: center; padding: 13px 24px; font-size: 10px;">AI-подбор услуги</a>
+        </div>
+
+        <div class="luxury-card fade-up d2" style="border-radius: 3px; padding: 36px;">
+            <h3 class="brand-serif" style="font-size: 22px; color: var(--cream); margin-bottom: 20px; font-weight: 500;">Информация</h3>
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <div style="width: 6px; height: 6px; border-radius: 50%; background: var(--gold); margin-top: 5px; flex-shrink: 0;"></div>
+                    <p style="font-size: 13px; color: var(--mist); line-height: 1.6; font-weight: 300;">Запись подтверждается автоматически</p>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <div style="width: 6px; height: 6px; border-radius: 50%; background: var(--gold); margin-top: 5px; flex-shrink: 0;"></div>
+                    <p style="font-size: 13px; color: var(--mist); line-height: 1.6; font-weight: 300;">Отменить можно до 2 часов до визита</p>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <div style="width: 6px; height: 6px; border-radius: 50%; background: var(--gold); margin-top: 5px; flex-shrink: 0;"></div>
+                    <p style="font-size: 13px; color: var(--mist); line-height: 1.6; font-weight: 300;">Время работы: ежедневно 9:00–21:00</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
 {% endblock %}
