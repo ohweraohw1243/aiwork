@@ -12,16 +12,12 @@ GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "super_secret_key_for_session")
 
-# Конфигурация БД: если есть DATABASE_URL (для Render/Railway), берем ее. 
-# Иначе создаем локальный SQLite-файл "salon.db"
 db_url = (os.environ.get("DATABASE_URL") or "sqlite:///salon.db").strip()
 if db_url.startswith("postgres://"):
     db_url = db_url.replace("postgres://", "postgresql://", 1)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-print(f"DB URL repr: {repr(db_url)}", flush=True)
 
 db = SQLAlchemy(app)
 
@@ -46,57 +42,46 @@ class History(db.Model):
     service_name = db.Column(db.String(120), nullable=False)
     price = db.Column(db.Integer, nullable=False)
 
-class AvailableSlot(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.String(50), nullable=False)
-    master = db.Column(db.String(50), nullable=False)
-    avatar = db.Column(db.String(250), nullable=False)
-
-# Статический список услуг
+# ==== БАЗА УСЛУГ ====
 SERVICES_LIST = [
-    {"name": "💅 Маникюр с покрытием", "price": 1800},
-    {"name": "🦶 Педикюр", "price": 2500},
-    {"name": "💇‍♀️ Стрижка женская", "price": 3000},
-    {"name": "✂️ Стрижка мужская", "price": 1500},
-    {"name": "🎨 Окрашивание (сложное)", "price": 6500},
-    {"name": "💆‍♀️ SPA-уход для волос", "price": 3500},
-    {"name": "🧖‍♀️ Массаж лица", "price": 2000},
-    {"name": "✨ Коррекция и окрашивание бровей", "price": 1500},
-    {"name": "🌟 Ламинирование ресниц", "price": 2200},
-    {"name": "💄 Вечерний макияж", "price": 3500},
-    {"name": "🧴 Шугаринг/Эпиляция", "price": 1800}
+    {"id": "manicure", "name": "💅 Маникюр с покрытием", "price": 1800, "category": "Ногти", "duration": "1.5 ч", "description": "Комбинированный маникюр с выравниванием и стойким покрытием гель-лаком.", "ai_info": "Идеально подходит для ухоженного вида на несколько недель."},
+    {"id": "pedicure", "name": "🦶 Педикюр", "price": 2500, "category": "Ногти", "duration": "1.5 ч", "description": "Аппаратный или комбинированный педикюр.", "ai_info": "Важно для здоровья и эстетики ваших ног."},
+    {"id": "haircut-f", "name": "💇‍♀️ Стрижка женская", "price": 3000, "category": "Волосы", "duration": "1 ч", "description": "Стильная стрижка с подбором формы.", "ai_info": "Поможет освежить образ и избавиться от секущихся кончиков."},
+    {"id": "haircut-m", "name": "✂️ Стрижка мужская", "price": 1500, "category": "Волосы", "duration": "45 мин", "description": "Классическая или модельная мужская стрижка.", "ai_info": "Поддерживает аккуратный и деловой вид."},
+    {"id": "coloring", "name": "🎨 Окрашивание (сложное)", "price": 6500, "category": "Волосы", "duration": "3-4 ч", "description": "Омбре, шатуш, балаяж или мелирование.", "ai_info": "Визуально добавит волосам объем и переливы цвета."},
+    {"id": "hair-spa", "name": "💆‍♀️ SPA-уход для волос", "price": 3500, "category": "Волосы", "duration": "1 ч", "description": "Глубокое восстановление и питание волос.", "ai_info": "Вернет волосам блеск, мягкость и силу."},
+    {"id": "face-massage", "name": "🧖‍♀️ Массаж лица", "price": 2000, "category": "Лицо", "duration": "45 мин", "description": "Скульптурный массаж для тонуса кожи.", "ai_info": "Отлично снимает отеки и улучшает цвет лица."},
+    {"id": "brows", "name": "✨ Коррекция и окрашивание бровей", "price": 1500, "category": "Лицо", "duration": "45 мин", "description": "Архитектура бровей хной или краской.", "ai_info": "Сделает взгляд более выразительным."},
+    {"id": "lashes", "name": "🌟 Ламинирование ресниц", "price": 2200, "category": "Лицо", "duration": "1 ч", "description": "Подкручивание, окрашивание и питание ресниц.", "ai_info": "Визуально удлиняет ресницы без наращивания."},
+    {"id": "makeup", "name": "💄 Вечерний макияж", "price": 3500, "category": "Макияж", "duration": "1.5 ч", "description": "Стойкий макияж для особых случаев.", "ai_info": "Поможет стать звездой на любом мероприятии."},
+    {"id": "epilation", "name": "🧴 Шугаринг/Эпиляция", "price": 1800, "category": "Тело", "duration": "30-60 мин", "description": "Бережное удаление нежелательных волос.", "ai_info": "Обеспечит гладкость кожи на длительное время."}
 ]
 
-# Инициализация БД и стартовых данных
+def get_base_data():
+    """Хелпер, чтобы во все шаблоны передавался необходимый минимум (data)."""
+    if 'user_id' in session:
+        user = db.session.get(User, session['user_id'])
+        if user:
+            return {"name": user.name, "services_list": SERVICES_LIST}
+    return {"name": "Гость", "services_list": SERVICES_LIST}
+
+# Инициализация БД
 with app.app_context():
     db.create_all()
-    
-    # Если слоты пусты, заполняем базу
-    if not AvailableSlot.query.first():
-        db.session.add(AvailableSlot(date="2026-05-08 12:00", master="Елена", avatar="https://ui-avatars.com/api/?name=Елена&background=fdf4ff&color=4f46e5"))
-        db.session.add(AvailableSlot(date="2026-05-09 10:00", master="Олег", avatar="https://ui-avatars.com/api/?name=Олег&background=f0f9ff&color=c026d3"))
-        db.session.add(AvailableSlot(date="2026-05-11 16:00", master="Ирина", avatar="https://ui-avatars.com/api/?name=Ирина&background=fff1f2&color=db2777"))
-        db.session.add(AvailableSlot(date="2026-05-12 18:30", master="Елена", avatar="https://ui-avatars.com/api/?name=Елена&background=fdf4ff&color=4f46e5"))
-        db.session.add(AvailableSlot(date="2026-05-14 14:00", master="Анна", avatar="https://ui-avatars.com/api/?name=Анна&background=fef2f2&color=e11d48"))
-        
-    # Добавляем тестового юзера, если его нет
     if not User.query.filter_by(email="test@test.ru").first():
         test_user = User(email="test@test.ru", password="123", name="Александра")
         db.session.add(test_user)
-        db.session.commit() # коммитим, чтобы получить id
-        
-        # Добавляем историю
+        db.session.commit()
         db.session.add(History(user_id=test_user.id, date="2026-04-05", service_name="🎨 Окрашивание (сложное)", price=6500))
         db.session.add(History(user_id=test_user.id, date="2026-03-12", service_name="💅 Маникюр с покрытием", price=1800))
-        db.session.add(History(user_id=test_user.id, date="2026-02-20", service_name="✨ Коррекция и окрашивание бровей", price=1500))
-        
-        # Добавляем актуальные записи
         db.session.add(Appointment(user_id=test_user.id, date="2026-05-10 14:00", service_name="💅 Маникюр с покрытием", master="Елена"))
-        db.session.add(Appointment(user_id=test_user.id, date="2026-05-15 18:00", service_name="💇‍♀️ Стрижка женская", master="Олег"))
-        
-    db.session.commit()
+        db.session.commit()
 
 # ==== РОУТЫ ====
+
+@app.route('/')
+def landing():
+    return render_template('landing.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -141,113 +126,14 @@ def logout():
     session.clear()
     return redirect(url_for('landing'))
 
-@app.route('/api/cancel', methods=['POST'])
-def cancel_appointment():
-    if 'user_id' not in session:
-        return jsonify({"error": "Unauthorized"}), 401
-    
-    data = request.json
-    date_to_cancel = data.get('date')
-    
-    appt = Appointment.query.filter_by(user_id=session['user_id'], date=date_to_cancel).first()
-    if appt:
-        # Возвращаем это время как свободное окно
-        slot = AvailableSlot(
-            date=date_to_cancel, 
-            master=appt.master, 
-            avatar=f"https://ui-avatars.com/api/?name={appt.master}&background=random"
-        )
-        db.session.add(slot)
-        db.session.delete(appt)
-        db.session.commit()
-        return jsonify({"success": True})
-            
-    return jsonify({"error": "Запись не найдена"}), 404
-
-@app.route('/api/book', methods=['POST'])
-def book_appointment():
-    if 'user_id' not in session:
-        return jsonify({"error": "Unauthorized"}), 401
-        
-    data = request.json
-    date_to_book = data.get('date')
-    
-    slot = AvailableSlot.query.filter_by(date=date_to_book).first()
-    if slot:
-        appt = Appointment(
-            user_id=session['user_id'], 
-            date=date_to_book, 
-            service_name="🎉 Желаемая услуга (выбрана из окна)", 
-            master=slot.master
-        )
-        db.session.add(appt)
-        db.session.delete(slot)
-        db.session.commit()
-        return jsonify({"success": True})
-            
-    return jsonify({"error": "Окно не найдено"}), 404
-
-@app.route('/api/add_history', methods=['POST'])
-def add_history():
-    if 'user_id' not in session:
-        return jsonify({"error": "Unauthorized"}), 401
-    
-    service_name = request.form.get('service')
-    price = 0
-    for s in SERVICES_LIST:
-        if s['name'] == service_name:
-            price = s['price']
-            break
-            
-    if price:
-        hist = History(
-            user_id=session['user_id'],
-            date=datetime.now().strftime("%Y-%m-%d"), 
-            service_name=service_name, 
-            price=price
-        )
-        db.session.add(hist)
-        db.session.commit()
-        
-    return redirect(url_for('cabinet'))
-
-# Публичная главная для незалогиненных пользователей
-@app.route('/')
-def landing():
-    return render_template('landing.html')
-
-
 @app.route('/smart-booking')
 def smart_booking():
     is_authenticated = 'user_id' in session
     booking_url = '/booking' if is_authenticated else url_for('login', next='/booking')
-    return render_template('smart_booking.html', is_authenticated=is_authenticated, booking_url=booking_url)
+    
+    display_data = get_base_data()
+    return render_template('smart_booking.html', is_authenticated=is_authenticated, booking_url=booking_url, data=display_data)
 
-
-@app.route('/api/prebooking_chat', methods=['POST'])
-def prebooking_chat():
-    data = request.json or {}
-    question = data.get('question', '').strip()
-
-    if not question:
-        return jsonify({"error": "Пустой вопрос"}), 400
-
-    prompt = f"""
-    Клиент пишет: "{question}"
-
-    Ты ассистент салона красоты. Твоя задача: мягко помочь клиенту выбрать услугу и перейти к записи.
-    Дай короткий ответ (2-4 предложения), уточни 1 важный вопрос при необходимости.
-    Не отвечай на темы вне салона красоты.
-    """
-    system_role = (
-        "Ты AI-ассистент салона красоты. Отвечай только по теме услуг салона, выбора процедуры, "
-        "ухода, подготовки к визиту и записи. Если вопрос не по теме салона, "
-        "вежливо откажись и предложи вернуться к выбору услуги."
-    )
-    return call_groq_api(prompt, system_role=system_role)
-
-
-# Личный кабинет клиента
 @app.route('/cabinet')
 def cabinet():
     if 'user_id' not in session:
@@ -261,17 +147,13 @@ def cabinet():
     appts = Appointment.query.filter_by(user_id=user.id).order_by(Appointment.date).all()
     history = History.query.filter_by(user_id=user.id).order_by(History.date.desc()).all()
     
-    display_data = {
-        "name": user.name,
-        "active_appointments": [{"date": a.date, "service": a.service_name, "master": a.master} for a in appts],
-        "history": [{"date": h.date, "service": h.service_name, "price": h.price} for h in history],
-        "services_list": SERVICES_LIST
-    }
+    display_data = get_base_data()
+    display_data["active_appointments"] = [{"date": a.date, "service": a.service_name, "master": a.master} for a in appts]
+    display_data["history"] = [{"date": h.date, "service": h.service_name, "price": h.price} for h in history]
     
     return render_template('cabinet.html', data=display_data)
 
-# Страница онлайн-записи
-@app.route('/booking')
+@app.route('/booking', methods=['GET', 'POST'])
 def booking():
     if 'user_id' not in session:
         return redirect(url_for('login', next=request.path))
@@ -280,98 +162,147 @@ def booking():
     if not user:
         session.clear()
         return redirect(url_for('login'))
+        
+    masters_list = ["Елена", "Олег", "Ирина", "Анна"]
+    message = None
     
-    slots = AvailableSlot.query.order_by(AvailableSlot.date).all()
+    if request.method == 'POST':
+        service = request.form.get('service')
+        master = request.form.get('master')
+        dt = request.form.get('datetime')
+        if service and master and dt:
+            dt_str = dt.replace("T", " ")
+            appt = Appointment(user_id=user.id, date=dt_str, service_name=service, master=master)
+            db.session.add(appt)
+            db.session.commit()
+            message = "Запись успешно оформлена!"
+            
+    display_data = get_base_data()
+    display_data["masters"] = masters_list
     
-    display_data = {
-        "name": user.name,
-        "available_slots": [{"date": s.date, "master": s.master, "avatar": s.avatar} for s in slots]
-    }
-    
-    return render_template('booking.html', data=display_data)
+    selected_service = request.args.get('service')
+    return render_template('booking.html', data=display_data, message=message, selected_service=selected_service)
 
 @app.route('/services')
 def services_page():
-    if 'user_id' not in session:
-        return redirect(url_for('login', next=request.path))
-    user = db.session.get(User, session['user_id'])
-    
-    display_data = {
-        "name": user.name if user else "Гость",
-        "services_list": SERVICES_LIST
-    }
+    display_data = get_base_data()
     return render_template('services.html', data=display_data)
 
-@app.route('/service/<path:service_name>')
-def service_detail(service_name):
-    if 'user_id' not in session:
-        return redirect(url_for('login', next=request.path))
-    user = db.session.get(User, session['user_id'])
-    
-    # Ищем услугу в списке
-    service_info = next((s for s in SERVICES_LIST if s["name"] == service_name), None)
+@app.route('/services/<service_id>')
+def service_detail(service_id):
+    display_data = get_base_data()
+    service_info = next((s for s in SERVICES_LIST if s["id"] == service_id), None)
     if not service_info:
         return redirect(url_for('services_page'))
-        
-    display_data = {
-        "name": user.name if user else "Гость",
-        "service": service_info
-    }
-    return render_template('service_detail.html', data=display_data)
+    display_data['service'] = service_info
+    return render_template('service_detail.html', data=display_data, service=service_info)
 
 @app.route('/qa')
 def qa_page():
-    if 'user_id' not in session:
-        return redirect(url_for('login', next=request.path))
-    user = db.session.get(User, session['user_id'])
-    
-    display_data = {
-        "name": user.name if user else "Гость"
-    }
+    display_data = get_base_data()
     return render_template('qa.html', data=display_data)
 
-@app.route('/api/ask_question', methods=['POST'])
-def ask_question():
+# ==== API ЭНДПОИНТЫ ====
+
+@app.route('/api/cancel-appointment', methods=['POST'])
+def cancel_appointment():
     if 'user_id' not in session:
         return jsonify({"error": "Unauthorized"}), 401
     
-    data = request.json
+    data = request.json or {}
+    date_to_cancel = data.get('date')
+    
+    appt = Appointment.query.filter_by(user_id=session['user_id'], date=date_to_cancel).first()
+    if appt:
+        db.session.delete(appt)
+        db.session.commit()
+        return jsonify({"success": True})
+            
+    return jsonify({"error": "Запись не найдена"}), 404
+
+@app.route('/api/smart-booking', methods=['POST'])
+def api_smart_booking():
+    data = request.json or {}
+    history = data.get('history', [])
+    
+    if not history:
+        return jsonify({"reply": "Опишите ваш запрос, и я помогу вам."})
+        
+    system_role = (
+        "Ты AI-ассистент салона красоты 'Стиль и Грация'. Твоя цель - помочь клиенту выбрать услугу. "
+        "Отвечай кратко и приветливо (1-3 предложения). "
+        "Список наших услуг: " + ", ".join([s['name'] for s in SERVICES_LIST]) + "."
+    )
+    
+    messages = [{"role": "system", "content": system_role}]
+    for msg in history:
+        messages.append({"role": msg['role'], "content": msg['content']})
+        
+    if not GROQ_API_KEY:
+        # Мок, если не указан API-ключ
+        last_msg = history[-1]['content'].lower()
+        if "ногти" in last_msg or "маникюр" in last_msg:
+            return jsonify({
+                "reply": "Рекомендую наш фирменный маникюр с покрытием! Займет около 1.5 часов.",
+                "service_suggestion": "💅 Маникюр с покрытием",
+                "service_id": "manicure"
+            })
+        return jsonify({"reply": "Замечательно. Может, хотите обновить стрижку или сделать уход за лицом?"})
+        
+    try:
+        headers = {
+            "Authorization": f"Bearer {GROQ_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "model": "llama-3.1-8b-instant",
+            "messages": messages,
+            "temperature": 0.7
+        }
+        
+        response = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
+        response.raise_for_status()
+        
+        reply = response.json()["choices"][0]["message"]["content"]
+        
+        # Легкий матчинг услуги
+        suggested_id = None
+        suggested_name = None
+        for s in SERVICES_LIST:
+            name_no_emoji = s['name'].split(" ", 1)[-1].lower()
+            if name_no_emoji in reply.lower():
+                suggested_id = s['id']
+                suggested_name = s['name']
+                break
+                
+        resp_data = {"reply": reply}
+        if suggested_id:
+            resp_data["service_suggestion"] = suggested_name
+            resp_data["service_id"] = suggested_id
+            
+        return jsonify(resp_data)
+    except Exception as e:
+        print("GROQ API ERROR:", str(e))
+        return jsonify({"reply": "Извините, сейчас я не могу ответить. Попробуйте позже."})
+
+@app.route('/api/qa', methods=['POST'])
+def api_qa():
+    data = request.json or {}
     question = data.get('question', '')
     
-    prompt = f"""
-    Клиент задает вопрос: "{question}"
-
-    Если вопрос касается услуг салона, цен, записи, ухода за волосами/кожей/ногтями или работы салона — ответь вежливо и профессионально.
-    Если вопрос НЕ связан с салоном красоты и его услугами — вежливо откажись отвечать и предложи задать вопрос по теме салона.
-    """
+    if not question:
+        return jsonify({"error": "Пустой вопрос"}), 400
+        
     system_role = (
         "Ты AI-ассистент салона красоты «Стиль и Грация». "
         "Ты отвечаешь ТОЛЬКО на вопросы, связанные с салоном красоты: услуги, цены, запись, уход за собой, мастера, акции. "
-        "На любые другие темы (математика, история, программирование, новости и т.д.) ты вежливо отказываешься отвечать "
-        "и напоминаешь, что можешь помочь только по вопросам салона красоты."
+        "На любые другие темы ты вежливо отказываешься отвечать. Отвечай кратко."
     )
-    return call_groq_api(prompt, system_role=system_role)
-
-@app.route('/api/service_info', methods=['POST'])
-def get_service_info():
-    if 'user_id' not in session:
-        return jsonify({"error": "Unauthorized"}), 401
+    prompt = f"Вопрос клиента: {question}"
     
-    data = request.json
-    service_name = data.get('service_name', '')
-    
-    prompt = f"""
-    Твоя роль - эксперт-косметолог и мастер салона красоты "Стиль и Грация".
-    Расскажи подробно и привлекательно об услуге "{service_name}". 
-    Зачем она нужна клиентам, какой будет эффект и почему клиенту стоит записаться прямо сейчас?
-    Разбей на 2-3 небольших абзаца и добавь немного эмодзи.
-    """
-    return call_groq_api(prompt, system_role="Ты эксперт салона красоты. Отвечай увлекательно и профессионально.")
-
-def call_groq_api(prompt, system_role="Ты AI-ассистент."):
     if not GROQ_API_KEY:
-        return jsonify({"error": "GROQ_API_KEY is not set"}), 503
-
+        return jsonify({"answer": "Для генерации ответа нужен GROQ_API_KEY, но мы всегда рады помочь вам."})
+        
     try:
         headers = {
             "Authorization": f"Bearer {GROQ_API_KEY}",
@@ -389,21 +320,20 @@ def call_groq_api(prompt, system_role="Ты AI-ассистент."):
         response = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
         response.raise_for_status()
         
-        data = response.json()
-        result = data["choices"][0]["message"]["content"]
+        reply_data = response.json()
+        result = reply_data["choices"][0]["message"]["content"]
         return jsonify({"answer": result})
     except Exception as e:
         print("GROQ API ERROR:", str(e))
         return jsonify({"error": str(e)}), 500
 
-@app.route('/api/generate_offer', methods=['POST'])
-def generate_offer():
+@app.route('/api/ai-offer', methods=['POST'])
+def api_ai_offer():
     if 'user_id' not in session:
         return jsonify({"error": "Unauthorized"}), 401
         
     user = db.session.get(User, session['user_id'])
     if not user:
-        session.clear()
         return jsonify({"error": "User not found"}), 401
 
     history_items = History.query.filter_by(user_id=user.id).all()
@@ -419,10 +349,11 @@ def generate_offer():
     История визитов клиента: {history_str}.
     
     Основываясь на истории клиента, предложи услугу, которая идеально дополнит этот опыт. 
-    Если истории нет - предложи популярную классику (например, легкий маникюр или уход) как новому клиенту.
     Напиши предложение в 2-3 доброжелательных предложениях. Обращайся к клиенту по имени, не используй приветствие (сразу к сути).
-    Сделай так, чтобы захотелось сразу записаться!
     """
+
+    if not GROQ_API_KEY:
+        return jsonify({"offer": f"{user.name}, как насчет освежить образ? Попробуйте наш SPA-уход для волос!"})
 
     try:
         headers = {
@@ -433,14 +364,8 @@ def generate_offer():
         payload = {
             "model": "llama-3.1-8b-instant", 
             "messages": [
-                {
-                    "role": "system",
-                    "content": "Ты услужливый AI-ассистент салона красоты. Отвечай кратко, красиво и профессионально. Не пиши лишних рассуждений."
-                },
-                {
-                    "role": "user",
-                    "content": prompt,
-                }
+                {"role": "system", "content": "Ты услужливый AI-ассистент салона красоты. Отвечай кратко, красиво и профессионально."},
+                {"role": "user", "content": prompt}
             ],
             "temperature": 0.7
         }
@@ -448,16 +373,14 @@ def generate_offer():
         response = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
         response.raise_for_status()
         
-        data = response.json()
-        offer = data["choices"][0]["message"]["content"]
+        reply_data = response.json()
+        offer = reply_data["choices"][0]["message"]["content"]
         return jsonify({"offer": offer})
     except Exception as e:
         print("GROQ API ERROR:", str(e))
-        if hasattr(e, 'response') and e.response is not None:
-            print("Response:", e.response.text)
         return jsonify({"error": str(e)}), 500
 
+
 if __name__ == '__main__':
-    # Эта конфигурация подходит как для локального запуска, так и для некоторых хостингов (вроде Render)
     port = int(os.environ.get("PORT", 5001))
     app.run(host='0.0.0.0', port=port, debug=True)
