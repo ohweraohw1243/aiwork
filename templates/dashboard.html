@@ -104,7 +104,7 @@
                     <span style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold);">анализируем...</span>
                 </div>
                 <div id="offer-service" style="display:none; margin-top: 16px;">
-                    <a href="/smart-booking" class="btn-gold" style="padding: 12px 28px; font-size: 10px;">Записаться на эту процедуру</a>
+                    <a id="offer-booking-link" href="/booking" class="btn-gold" style="padding: 12px 28px; font-size: 10px;">Записаться на эту процедуру</a>
                 </div>
             </div>
         </div>
@@ -160,6 +160,9 @@ document.getElementById('generate-offer-btn')?.addEventListener('click', async f
         const d = await r.json();
         loader.style.display = 'none';
         offerText.textContent = d.offer || 'Попробуйте нашу процедуру по уходу за кожей — она подойдёт именно вам.';
+        if (d.service_id) {
+            document.getElementById('offer-booking-link').href = `/booking?service=${d.service_id}`;
+        }
         offerText.style.display = 'block';
         offerService.style.display = 'block';
     } catch {
