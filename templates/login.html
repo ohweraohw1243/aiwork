@@ -14,13 +14,16 @@
             --border: rgba(201,168,76,0.18); --border-hi: rgba(201,168,76,0.42);
             --gold: #C9A84C; --gold-hi: #E4C97A; --gold-dim: rgba(201,168,76,0.10);
             --cream: #EDE3D0; --cream-dim: #A89E8C; --mist: #6A6A7A;
+            --blush: #D9B8AE; --pearl: #F2E8DD;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html, body { height: 100%; }
         body {
             font-family: 'Jost', sans-serif;
             font-weight: 300;
-            background-color: var(--noir);
+            background: radial-gradient(1100px 620px at 15% -20%, rgba(217,184,174,0.1) 0%, transparent 60%),
+                        radial-gradient(900px 480px at 85% 10%, rgba(201,168,76,0.1) 0%, transparent 60%),
+                        var(--noir);
             color: var(--cream);
             -webkit-font-smoothing: antialiased;
             display: flex;
@@ -34,6 +37,15 @@
             pointer-events: none;
             z-index: 1;
             opacity: 0.7;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            inset: -10vh 0 auto 0;
+            height: 60vh;
+            background: radial-gradient(ellipse, rgba(201,168,76,0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 1;
         }
         .brand-serif { font-family: 'Playfair Display', serif; }
         .fade-up { animation: fadeUp 0.85s cubic-bezier(0.22,1,0.36,1) both; }
@@ -52,7 +64,7 @@
             font-size: 14px;
             font-weight: 300;
             letter-spacing: 0.03em;
-            border-radius: 2px;
+            border-radius: 8px;
             outline: none;
             transition: border-color 0.25s, background 0.25s;
         }
@@ -71,7 +83,7 @@
             text-transform: uppercase;
             border: none;
             cursor: pointer;
-            border-radius: 2px;
+            border-radius: 8px;
             transition: all 0.35s ease;
             position: relative;
             overflow: hidden;
