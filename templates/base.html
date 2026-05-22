@@ -234,11 +234,26 @@
         }
         .nav-row {
             display: flex;
-            gap: 28px;
-            margin-top: 16px;
-            padding: 12px 0 6px;
-            border-top: 1px solid var(--border);
+            align-items: center;
+            justify-content: center;
+            gap: 26px;
+            margin: 16px auto 8px;
+            padding: 10px 22px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: rgba(7,7,10,0.35);
+            box-shadow: inset 0 0 0 1px rgba(201,168,76,0.06), 0 18px 40px rgba(0,0,0,0.35);
             overflow-x: auto;
+            position: relative;
+            width: fit-content;
+        }
+        .nav-row::before {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border-radius: 999px;
+            background: radial-gradient(ellipse at center, rgba(201,168,76,0.08) 0%, transparent 60%);
+            z-index: 0;
         }
 
         /* ── NAV ── */
@@ -249,10 +264,11 @@
             text-transform: uppercase;
             color: var(--mist);
             transition: color 0.25s;
-            padding: 20px 0;
+            padding: 14px 6px;
             border-bottom: 1px solid transparent;
             transition: all 0.25s ease;
             position: relative;
+            z-index: 1;
         }
         .nav-link:hover { color: var(--cream); }
         .nav-link.active {
