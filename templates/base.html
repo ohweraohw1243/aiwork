@@ -270,10 +270,39 @@
             position: relative;
             z-index: 1;
         }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 4px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--gold);
+            transform: translateX(-50%) scale(0.2);
+            opacity: 0;
+            transition: transform 0.25s ease, opacity 0.25s ease;
+        }
         .nav-link:hover { color: var(--cream); }
+        .nav-link:hover::after {
+            transform: translateX(-50%) scale(0.8);
+            opacity: 0.5;
+        }
         .nav-link.active {
             color: var(--gold);
             border-bottom-color: var(--gold);
+            text-shadow: 0 0 16px rgba(201,168,76,0.4);
+            animation: navGlow 0.6s ease;
+        }
+        .nav-link.active::after {
+            transform: translateX(-50%) scale(1);
+            opacity: 1;
+            box-shadow: 0 0 12px rgba(201,168,76,0.6);
+        }
+
+        @keyframes navGlow {
+            0% { text-shadow: 0 0 0 rgba(201,168,76,0); }
+            100% { text-shadow: 0 0 16px rgba(201,168,76,0.4); }
         }
 
         /* ── TABLE ── */

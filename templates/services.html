@@ -16,6 +16,10 @@
         {% for service in data.services_list %}
         <a href="/services/{{ service.id }}" style="text-decoration: none;" class="hover-rise">
             <div class="luxury-card" style="border-radius: 3px; padding: 28px 32px; height: 100%; display: flex; flex-direction: column;">
+                <div style="position: relative; height: 150px; border-radius: 6px; overflow: hidden; margin-bottom: 18px;">
+                    <img src="{{ service.image_url }}" alt="{{ service.name }}" style="width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(10%) contrast(1.05);">
+                    <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,7,10,0.15) 0%, rgba(7,7,10,0.75) 100%);"></div>
+                </div>
                 <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px;">
                     <div>
                         <div style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px;">{{ service.category }}</div>
