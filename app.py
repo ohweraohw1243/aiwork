@@ -1,4 +1,7 @@
 import os
+import json
+import random
+import re
 import requests
 from datetime import datetime
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
@@ -56,6 +59,31 @@ SERVICES_LIST = [
     {"id": "makeup", "name": "💄 Вечерний макияж", "price": 3500, "category": "Макияж", "duration": "1.5 ч", "description": "Стойкий макияж для особых случаев.", "ai_info": "Поможет стать звездой на любом мероприятии."},
     {"id": "epilation", "name": "🧴 Шугаринг/Эпиляция", "price": 1800, "category": "Тело", "duration": "30-60 мин", "description": "Бережное удаление нежелательных волос.", "ai_info": "Обеспечит гладкость кожи на длительное время."}
 ]
+
+def build_services_catalog():
+    return "\n".join([
+        f"- {s['id']}: {s['name']} ({s['category']}, {s['duration']}, {s['price']} ₽)"
+        for s in SERVICES_LIST
+    ])
+
+def match_service_from_text(text):
+    if not text:
+        return None
+    lowered = text.lower()
+    for s in SERVICES_LIST:
+        name_no_emoji = s['name'].split(" ", 1)[-1].lower()
+        if s['id'].lower() in lowered or s['name'].lower() in lowered or name_no_emoji in lowered:
+            return s
+    return None
+
+def extract_json_block(text):
+    if not text:
+        return None
+    text = text.strip()
+    if text.startswith("{") and text.endswith("}"):
+        return text
+    match = re.search(r"\{.*?\}", text, flags=re.DOTALL)
+    return match.group(0) if match else None
 
 def get_base_data():
     """Хелпер, чтобы во все шаблоны передавался необходимый минимум (data)."""
@@ -231,7 +259,9 @@ def api_smart_booking():
     system_role = (
         "Ты AI-ассистент салона красоты 'Стиль и Грация'. Твоя цель - помочь клиенту выбрать услугу. "
         "Отвечай кратко и приветливо (1-3 предложения). "
-        "Список наших услуг: " + ", ".join([s['name'] for s in SERVICES_LIST]) + "."
+        "Ты ОБЯЗАН выбирать только услуги из списка ниже, любые другие услуги запрещены. "
+        "Ответ возвращай ТОЛЬКО в формате JSON: {\"reply\": \"...\", \"service_id\": \"id или null\"}. "
+        "Список услуг:\n" + build_services_catalog()
     )
     
     messages = [{"role": "system", "content": system_role}]
@@ -263,23 +293,29 @@ def api_smart_booking():
         response = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
         response.raise_for_status()
         
-        reply = response.json()["choices"][0]["message"]["content"]
-        
-        # Легкий матчинг услуги
-        suggested_id = None
-        suggested_name = None
-        for s in SERVICES_LIST:
-            name_no_emoji = s['name'].split(" ", 1)[-1].lower()
-            if name_no_emoji in reply.lower():
-                suggested_id = s['id']
-                suggested_name = s['name']
-                break
-                
-        resp_data = {"reply": reply}
-        if suggested_id:
-            resp_data["service_suggestion"] = suggested_name
-            resp_data["service_id"] = suggested_id
-            
+        raw_reply = response.json()["choices"][0]["message"]["content"]
+        reply_text = raw_reply
+        suggested = None
+
+        json_block = extract_json_block(raw_reply)
+        if json_block:
+            try:
+                parsed = json.loads(json_block)
+                reply_text = parsed.get("reply") or reply_text
+                service_id = parsed.get("service_id")
+                if service_id:
+                    suggested = next((s for s in SERVICES_LIST if s["id"] == service_id), None)
+            except json.JSONDecodeError:
+                pass
+
+        if not suggested:
+            suggested = match_service_from_text(reply_text)
+
+        resp_data = {"reply": reply_text}
+        if suggested:
+            resp_data["service_suggestion"] = suggested["name"]
+            resp_data["service_id"] = suggested["id"]
+
         return jsonify(resp_data)
     except Exception as e:
         print("GROQ API ERROR:", str(e))
@@ -347,9 +383,12 @@ def api_ai_offer():
     Твоя роль - вежливый AI-консультант и маркетолог салона красоты "Стиль и Грация".
     Разработай уникальное выгодное предложение на 1 услугу для нашего клиента по имени {user.name}.
     История визитов клиента: {history_str}.
-    
-    Основываясь на истории клиента, предложи услугу, которая идеально дополнит этот опыт. 
-    Напиши предложение в 2-3 доброжелательных предложениях. Обращайся к клиенту по имени, не используй приветствие (сразу к сути).
+
+    ОБЯЗАТЕЛЬНО выбери услугу только из списка ниже. Любые другие услуги запрещены.
+    Список услуг:\n{build_services_catalog()}.
+
+    Ответ возвращай ТОЛЬКО в формате JSON:
+    {{"offer": "...", "service_id": "id"}}
     """
 
     if not GROQ_API_KEY:
@@ -364,7 +403,7 @@ def api_ai_offer():
         payload = {
             "model": "llama-3.1-8b-instant", 
             "messages": [
-                {"role": "system", "content": "Ты услужливый AI-ассистент салона красоты. Отвечай кратко, красиво и профессионально."},
+                {"role": "system", "content": "Ты AI-ассистент салона красоты. Соблюдай формат JSON и используй только услуги из списка."},
                 {"role": "user", "content": prompt}
             ],
             "temperature": 0.7
@@ -374,8 +413,32 @@ def api_ai_offer():
         response.raise_for_status()
         
         reply_data = response.json()
-        offer = reply_data["choices"][0]["message"]["content"]
-        return jsonify({"offer": offer})
+        raw_offer = reply_data["choices"][0]["message"]["content"]
+        offer_text = raw_offer
+        suggested = None
+
+        json_block = extract_json_block(raw_offer)
+        if json_block:
+            try:
+                parsed = json.loads(json_block)
+                offer_text = parsed.get("offer") or offer_text
+                service_id = parsed.get("service_id")
+                if service_id:
+                    suggested = next((s for s in SERVICES_LIST if s["id"] == service_id), None)
+            except json.JSONDecodeError:
+                pass
+
+        if not suggested:
+            suggested = match_service_from_text(offer_text)
+
+        if not suggested:
+            suggested = random.choice(SERVICES_LIST)
+            offer_text = (
+                f"{user.name}, рекомендую {suggested['name']} — это отличный вариант, чтобы усилить эффект ваших предыдущих визитов. "
+                "Запишем для вас удобное время?"
+            )
+
+        return jsonify({"offer": offer_text, "service_id": suggested["id"], "service_name": suggested["name"]})
     except Exception as e:
         print("GROQ API ERROR:", str(e))
         return jsonify({"error": str(e)}), 500
