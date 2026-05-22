@@ -23,6 +23,8 @@
             --cream-dim: #A89E8C;
             --mist:      #6A6A7A;
             --mauve:     #8C7080;
+            --blush:     #D9B8AE;
+            --pearl:     #F2E8DD;
         }
 
         * { box-sizing: border-box; }
@@ -32,7 +34,9 @@
         body {
             font-family: 'Jost', sans-serif;
             font-weight: 300;
-            background-color: var(--noir);
+            background: radial-gradient(1200px 600px at 15% -20%, rgba(217,184,174,0.08) 0%, transparent 60%),
+                        radial-gradient(900px 500px at 85% 10%, rgba(201,168,76,0.08) 0%, transparent 60%),
+                        var(--noir);
             color: var(--cream);
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
@@ -53,12 +57,12 @@
         body::after {
             content: '';
             position: fixed;
-            top: -20vh;
+            top: -10vh;
             left: 50%;
             transform: translateX(-50%);
             width: 80vw;
             height: 60vh;
-            background: radial-gradient(ellipse, rgba(201,168,76,0.04) 0%, transparent 70%);
+            background: radial-gradient(ellipse, rgba(201,168,76,0.06) 0%, transparent 70%);
             pointer-events: none;
             z-index: 0;
         }
@@ -67,9 +71,10 @@
 
         /* ── CARDS ── */
         .luxury-card {
-            background: var(--surface);
+            background: linear-gradient(180deg, rgba(24,24,31,0.98) 0%, rgba(17,17,24,0.98) 100%);
             border: 1px solid var(--border);
             position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.35);
         }
         .luxury-card::before {
             content: '';
@@ -159,6 +164,83 @@
             background: var(--gold-dim);
         }
 
+        /* ── HEADER ── */
+        .header-shell {
+            padding: 22px 36px 8px;
+            background: linear-gradient(180deg, rgba(24,24,31,0.98) 0%, rgba(17,17,24,0.92) 100%);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+        .brand-badge {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+        }
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.02);
+        }
+        .brand-kicker {
+            font-size: 10px;
+            color: var(--mist);
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+        }
+        .brand-name {
+            font-size: 16px;
+            color: var(--cream);
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+        .account-chip {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 8px 14px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: rgba(201,168,76,0.06);
+        }
+        .account-label {
+            font-size: 9px;
+            color: var(--mist);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+        .account-name {
+            font-size: 13px;
+            color: var(--cream);
+            font-weight: 500;
+            margin-top: 4px;
+        }
+        .avatar-frame {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .nav-row {
+            display: flex;
+            gap: 28px;
+            margin-top: 16px;
+            padding: 12px 0 6px;
+            border-top: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
         /* ── NAV ── */
         .nav-link {
             font-size: 11px;
@@ -170,6 +252,7 @@
             padding: 20px 0;
             border-bottom: 1px solid transparent;
             transition: all 0.25s ease;
+            position: relative;
         }
         .nav-link:hover { color: var(--cream); }
         .nav-link.active {
@@ -326,40 +409,39 @@
         <div style="max-width: 1280px; margin: 0 auto; padding: 24px 32px;">
 
             <!-- ── HEADER ── -->
-            <header class="luxury-card fade-up" style="border-radius: 4px; padding: 0 40px; margin-bottom: 28px;">
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 24px 0 0;">
-                    <div style="display: flex; align-items: center; gap: 16px;">
-                        <div style="text-align: right;">
-                            <div style="font-size: 11px; color: var(--mist); letter-spacing: 0.1em;">клиент</div>
-                            <div style="font-size: 13px; color: var(--cream); font-weight: 500; margin-top: 2px;">{{ data.name if data else 'Гость' }}</div>
+            <header class="luxury-card fade-up header-shell" style="border-radius: 6px; margin-bottom: 28px;">
+                <div class="header-top">
+                    <a href="/" class="brand-badge">
+                        <div class="brand-icon">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5">
+                                <circle cx="12" cy="12" r="9"/>
+                                <path d="M12 7v5l3 3"/>
+                            </svg>
                         </div>
-                        <div style="width: 40px; height: 40px; border: 1px solid var(--border); border-radius: 2px; overflow: hidden; flex-shrink: 0;">
+                        <div>
+                            <div class="brand-kicker">beauty atelier</div>
+                            <div class="brand-name brand-serif">Стиль и Грация</div>
+                        </div>
+                    </a>
+
+                    <div class="account-chip">
+                        <div>
+                            <div class="account-label">клиент</div>
+                            <div class="account-name">{{ data.name if data else 'Гость' }}</div>
+                        </div>
+                        <div class="avatar-frame">
                             <img src="https://ui-avatars.com/api/?name={{ data.name if data else 'Guest' }}&background=18181F&color=C9A84C&size=80" alt="Avatar" style="width: 100%; height: 100%;">
                         </div>
-                        <div style="width: 1px; height: 32px; background: var(--border);"></div>
-                        
                         {% if session.get('user_id') %}
                         <a href="/logout" class="btn-outline" style="padding: 9px 22px; font-size: 10px;">Выйти</a>
                         {% else %}
                         <a href="/login" class="btn-outline" style="padding: 9px 22px; font-size: 10px;">Войти</a>
                         {% endif %}
                     </div>
-
-                    <div style="display: flex; align-items: center; gap: 16px;">
-                        <div style="text-align: right;">
-                            <div style="font-size: 11px; color: var(--mist); letter-spacing: 0.1em;">клиент</div>
-                            <div style="font-size: 13px; color: var(--cream); font-weight: 500; margin-top: 2px;">{{ data.name }}</div>
-                        </div>
-                        <div style="width: 40px; height: 40px; border: 1px solid var(--border); border-radius: 2px; overflow: hidden; flex-shrink: 0;">
-                            <img src="https://ui-avatars.com/api/?name={{ data.name }}&background=18181F&color=C9A84C&size=80" alt="Avatar" style="width: 100%; height: 100%;">
-                        </div>
-                        <div style="width: 1px; height: 32px; background: var(--border);"></div>
-                        <a href="/logout" class="btn-outline" style="padding: 9px 22px; font-size: 10px;">Выйти</a>
-                    </div>
                 </div>
 
                 <!-- Navigation -->
-                <nav style="display: flex; gap: 32px; margin-top: 8px; overflow-x: auto;">
+                <nav class="nav-row">
                     <a href="/cabinet" class="nav-link {% if request.path == '/cabinet' %}active{% endif %}">
                         Профиль
                     </a>

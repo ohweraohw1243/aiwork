@@ -22,16 +22,29 @@
             --cream: #EDE3D0;
             --cream-dim: #A89E8C;
             --mist: #6A6A7A;
+               --blush: #D9B8AE;
+               --pearl: #F2E8DD;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html, body { height: 100%; }
         body {
             font-family: 'Jost', sans-serif;
             font-weight: 300;
-            background-color: var(--noir);
+               background: radial-gradient(1200px 650px at 10% -20%, rgba(217,184,174,0.1) 0%, transparent 60%),
+                           radial-gradient(900px 480px at 85% 10%, rgba(201,168,76,0.1) 0%, transparent 60%),
+                           var(--noir);
             color: var(--cream);
             -webkit-font-smoothing: antialiased;
         }
+           body::after {
+               content: '';
+               position: fixed;
+               inset: -10vh 0 auto 0;
+               height: 60vh;
+               background: radial-gradient(ellipse, rgba(201,168,76,0.08) 0%, transparent 70%);
+               pointer-events: none;
+               z-index: 1;
+           }
         body::before {
             content: '';
             position: fixed;
@@ -109,7 +122,7 @@
             justify-content: center;
             gap: 10px;
             padding: 15px 42px;
-            background: transparent;
+               background: rgba(255,255,255,0.02);
             color: var(--cream-dim);
             font-family: 'Jost', sans-serif;
             font-size: 11px;
@@ -118,7 +131,7 @@
             text-transform: uppercase;
             text-decoration: none;
             border: 1px solid var(--border);
-            border-radius: 2px;
+               border-radius: 8px;
             transition: all 0.3s ease;
         }
         .btn-ghost:hover {
@@ -126,6 +139,14 @@
             color: var(--gold);
             background: var(--gold-dim);
         }
+
+           .top-nav {
+               background: rgba(10,10,14,0.55);
+               border: 1px solid var(--border);
+               border-radius: 16px;
+               backdrop-filter: blur(18px);
+               box-shadow: 0 24px 50px rgba(0,0,0,0.35);
+           }
 
         .stat-item {
             text-align: center;
@@ -135,10 +156,10 @@
         .stat-item:last-child { border-right: none; }
 
         .feature-card {
-            background: var(--surface);
+               background: linear-gradient(180deg, rgba(24,24,31,0.98) 0%, rgba(17,17,24,0.98) 100%);
             border: 1px solid var(--border);
             padding: 32px;
-            border-radius: 3px;
+               border-radius: 8px;
             position: relative;
             transition: border-color 0.3s ease, transform 0.3s ease;
             overflow: hidden;
@@ -159,13 +180,13 @@
         .hero-image {
             position: relative;
             overflow: hidden;
-            border-radius: 3px;
+               border-radius: 10px;
         }
         .hero-image::after {
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(160deg, rgba(7,7,10,0.2) 0%, rgba(7,7,10,0.6) 100%);
+               background: linear-gradient(160deg, rgba(7,7,10,0.18) 0%, rgba(7,7,10,0.68) 100%);
         }
 
         /* Marquee */
@@ -200,7 +221,7 @@
     <div style="position: relative; z-index: 2;">
 
         <!-- ── TOP NAV ── -->
-        <nav style="max-width: 1280px; margin: 0 auto; padding: 28px 40px; display: flex; align-items: center; justify-content: space-between;" class="fade-in">
+        <nav style="max-width: 1280px; margin: 0 auto; padding: 22px 28px; display: flex; align-items: center; justify-content: space-between;" class="top-nav fade-in">
             <div style="display: flex; align-items: center; gap: 16px;">
                 <div style="width: 36px; height: 36px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; border-radius: 2px;">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5">
